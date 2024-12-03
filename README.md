@@ -66,7 +66,7 @@ python manage.py migrate
 cd frontend
 npm install
 npm start
-
+```
 
 # 📱 MVP - Funcionalidades
 
