@@ -53,6 +53,7 @@
                     <th scope="row">Nombre</th>
                     <th scope="row">Descripcion</th>
                     <th scope="row">Imagen</th>
+                    <th scope="row"></th>
                 </tr>
             </thead>
             <tbody class="table-group-divider">
@@ -63,18 +64,17 @@
                     <td>
                         <img class="img-thumbnail" width="100" src="{{ o.imagen.url }}" alt="{{ o.nombre }}">
                     </td>
-                    <td>
-                        <form method="POST" action="{% url 'agregarObra' %}">
-                            {% csrf_token %}
-                            <button >
-                                Agregar
-                            </button>
-                        </form>
-                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
+            
         </table>
+        <form method="POST" action="{% url 'agregarObra' %}">
+            {% csrf_token %}
+            <button style="background-color: #C4B5A4; align-items: center;"class="d-grid" >
+                Agregar
+            </button>
+        </form>
 
         <h2>Productos</h2>
         <table class="table table-light table-hover">
@@ -95,10 +95,18 @@
                     <td>
                         <img class="img-thumbnail" width="100" src="{{ p.imagen.url }}" alt="{{ p.nombre }}">
                     </td>
+
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        <form method="POST" action="{% url 'agregarProducto' %}">
+            {% csrf_token %}
+            <button style="background-color: #C4B5A4; align-items: center;"class="d-grid">
+                Agregar
+            </button>
+        </form>
     </div>
+    <br>
 </body>
 </html>

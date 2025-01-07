@@ -62,21 +62,42 @@ def agregar_obra(request):
             descripcion = request.POST['descripcion']
             imagen = request.FILES['imagen']
             usuario = request.session.get('usuario')
-            
-            # Primero obtener el objeto Artista relacionado con el usuario
             artista = Artista.objects.get(usuario=usuario)
             
             obra = Obra(
                 nombre=nombre,
                 descripcion=descripcion,
                 imagen=imagen,
-                artista=artista  # Asignamos el objeto artista, no el usuario
+                artista=artista 
             )
             obra.save()
             return redirect('perfil')
         except Exception as e:
-            # Manejar el error apropiadamente
             print(f"Error al guardar la obra: {e}")
-            # Podrías agregar un mensaje de error aquí
             
     return render(request, 'pages/agregar-obra.html')
+
+def agregar_producto(request):
+    if request.method == 'POST':
+        try:
+            nombre = request.POST['nombre']
+            descripcion = request.POST['descripcion']
+            precio = request.POST['precio']
+            imagen = request.FILES['imagen']
+
+            usuario = request.session.get('usuario')
+            artista = Artista.objects.get(usuario=usuario)
+            
+            producto = Producto(
+                nombre=nombre,
+                descripcion=descripcion,
+                precio=precio,
+                imagen=imagen,
+                artista=artista 
+            )
+            producto.save()
+            return redirect('perfil')
+        except Exception as e:
+            print(f"Error al guardar la obra: {e}")
+            
+    return render(request, 'pages/agregar-producto.html')
