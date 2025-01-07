@@ -15,7 +15,7 @@ class Artista(models.Model):
         db_table = 'artista'
 
     def __str__(self):
-        return 'Artista: ' + self.usuario
+        return  self.usuario
 
 
 

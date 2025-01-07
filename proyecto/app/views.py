@@ -17,13 +17,9 @@ def listar_artista_contenido(request):
     productos = Producto.objects.filter(artista=artista)
     
     
-    return render(request, 'artista.html', {'obras': obras, 
+    return render(request, 'pages/artista.html', {'obras': obras, 
                                             'productos': productos,
-                                            'artistafoto':artista.imagen,
-                                            'artista': artista.usuario, 
-                                            'ncontacto': artista.ncontacto,
-                                            'correo': artista.correo,
-                                            'acerca': artista.acerca})
+                                            'artista':artista})
 
 
 def login_artista(request):
@@ -34,16 +30,53 @@ def login_artista(request):
         try:
             artista = Artista.objects.get(usuario=usuario)
         except:
-            return render(request, 'login.html', {'error': 'Usuario no encontrado.'})
+            return render(request, 'pages/login.html', {'error': 'Usuario no encontrado.'})
 
         
         if artista.contrasenia == contrasenia:
                 # Guardar el usuario en la sesión
                 request.session['usuario'] = artista.usuario
 
-                return redirect('listar_obras')
+                return redirect('perfil')
         else:
-            return render(request, 'login.html', {'error': 'Contraseña incorrecta.'})
+            return render(request, 'pages/login.html', {'error': 'Contraseña incorrecta.'})
             
     else:
-        return render(request, 'login.html')
+        return render(request, 'pages/login.html')
+
+def listar_artistas(request):
+    artistas = Artista.objects.all()
+    productos = Producto.objects.all()
+    obras = Obra.objects.all()
+
+    return render(request, 'pages/inicio.html', {
+        'artistas': artistas,
+        'productos': productos,
+        'obras': obras,
+    })
+
+def agregar_obra(request):
+    if request.method == 'POST':
+        try:
+            nombre = request.POST['nombre']
+            descripcion = request.POST['descripcion']
+            imagen = request.FILES['imagen']
+            usuario = request.session.get('usuario')
+            
+            # Primero obtener el objeto Artista relacionado con el usuario
+            artista = Artista.objects.get(usuario=usuario)
+            
+            obra = Obra(
+                nombre=nombre,
+                descripcion=descripcion,
+                imagen=imagen,
+                artista=artista  # Asignamos el objeto artista, no el usuario
+            )
+            obra.save()
+            return redirect('perfil')
+        except Exception as e:
+            # Manejar el error apropiadamente
+            print(f"Error al guardar la obra: {e}")
+            # Podrías agregar un mensaje de error aquí
+            
+    return render(request, 'pages/agregar-obra.html')
