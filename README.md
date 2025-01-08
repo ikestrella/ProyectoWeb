@@ -72,17 +72,17 @@ npm start
 
 # 📱 MVP - Funcionalidades
 
-## Portal Artistas (React)
+## Portal Artistas (Bootstrap)
 - Registro/Login para artistas.
 - Subida y gestión de obras de arte.
 - Panel de métricas (visualizaciones, interacciones, ventas).
 
-## Galería Interactiva (React)
+## Galería Interactiva (Bootstrap)
 - Navegación entre obras por categorías.
 - Visualización inmersiva de las obras.
 - Filtros avanzados para explorar el contenido.
 
-## Módulo Administrador (Django)
+## Módulo Administrador (Bootstrap)
 - Gestión de usuarios y contenido.
 - Moderación de galerías y exposiciones.
 - Reportes de actividad y desempeño de la plataforma.
