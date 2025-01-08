@@ -91,7 +91,7 @@ npm start
 ## 📧 Contacto
 
 **Iam Estrella**  
-Correo: ikerestrella@utpl.edu.ec
+Correo: ikestrella@utpl.edu.ec
 
 **Jean Alejo**
 Correo: jgalejo@utpl.edu.ec
