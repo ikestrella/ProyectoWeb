@@ -3,12 +3,12 @@ from django.db import models
 
 # Create your models here.
 class Artista(models.Model):
-    imagen = models.ImageField(upload_to='artistas/')  # Cambiado a ImageField
-    usuario = models.CharField(max_length=100, unique=True)  # Usuario único
-    contrasenia = models.CharField(max_length=128)  # Idealmente usar la autenticación de Django
+    imagen = models.ImageField(upload_to='artistas/')
+    usuario = models.CharField(max_length=100, unique=True) 
+    contrasenia = models.CharField(max_length=128)
     acerca = models.CharField(max_length=400)
     correo = models.EmailField(max_length=100, unique=True)
-    ncontacto = models.CharField(max_length=15)  # Soporte para diferentes formatos internacionales
+    ncontacto = models.CharField(max_length=15)
 
 
     class Meta:
@@ -21,7 +21,7 @@ class Artista(models.Model):
 
 class Producto(models.Model):
     nombre = models.CharField(max_length=100)
-    imagen = models.ImageField(upload_to='productos/')  # Cambiado a ImageField
+    imagen = models.ImageField(upload_to='productos/')
     precio = models.IntegerField() 
     descripcion = models.TextField(max_length=200)
     artista = models.ForeignKey(Artista, db_column='artista', blank=True, null=True, on_delete=models.SET_NULL)
@@ -38,7 +38,7 @@ class Producto(models.Model):
 class Obra(models.Model):  
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(max_length=255)
-    imagen = models.ImageField(upload_to='obras/')  # Para cargar imágenes
+    imagen = models.ImageField(upload_to='obras/')
     artista = models.ForeignKey(Artista, db_column='artista', blank=True, null=True, on_delete=models.SET_NULL)
 
     class Meta:

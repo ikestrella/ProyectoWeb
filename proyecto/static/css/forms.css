@@ -1,0 +1,49 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-label {
+    font-weight: bold;
+    color: #555;
+}
+
+.form-control {
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+}
+
+.form-control:focus {
+    border-color: #C4B5A4;
+    box-shadow: 0 0 0 0.2rem rgba(196, 181, 164, 0.25);
+}
+
+.btn-primary {
+    background-color: #C4B5A4;
+    border-color: #C4B5A4;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #b3a491;
+    border-color: #b3a491;
+}
+
+.custom-file-label::after {
+    content: "Buscar";
+}

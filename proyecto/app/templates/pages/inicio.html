@@ -11,79 +11,91 @@
 </head>
 
 <body class="bg-light">
-    {% include '../components/toolbar.html' %}
+    <header>
+        {% include '../components/toolbar.html' %}
+    </header>
 
-    <div class="container">
-        <!-- Artistas Section -->
-        <div class="mb-5">
-            <h2 class="section-title">Artistas</h2>
-            <div class="row g-4">
-                {% for a in artistas %}
-                <div class="col-md-4">
-                    <div class="card">
-                        <img src="{{ a.imagen.url }}" alt="{{ a.nombre }}" class="card-img-top">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title fw-bold mb-3">{{ a.nombre }}</h5>
-                            <p class="card-text flex-grow-1">{{ a.descripcion }}</p>
-                            <button class="view-more-btn mt-3">Ver más</button>
-                        </div>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="col-12">
-                    <div class="empty-message">No se encontraron artistas.</div>
-                </div>
-                {% endfor %}
-            </div>
+    <section class="hero text-white text-center py-5" style="background: url('/media/fondo.png') no-repeat center center / cover;"> 
+        <div class="container" style="padding-top: 200px;">
+            <h1 class="display-4 fw-bold">Artistas Urbanos</h1>
+            <p class="lead">Lorem ipsum es simplemente el texto de relleno de las imprentas y archivos de texto.</p>
+            <a href="#" class="btn btn-primary btn-lg mt-4">Regístrate</a>
         </div>
+    </section>
 
-        <!-- Productos Section -->
-        <div class="mb-5">
-            <h2 class="section-title">Productos</h2>
+    <div class="container mt-5">
+        <section class="mb-5">
+            <h2 class="text-center fw-bold mb-4">Productos</h2>
             <div class="row g-4">
                 {% for p in productos %}
                 <div class="col-md-4">
-                    <div class="card">
+                    <div class="card h-100">
                         <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}" class="card-img-top">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title fw-bold mb-3">{{ p.nombre }}</h5>
-                            <p class="card-text flex-grow-1">{{ p.descripcion }}</p>
-                            <p class="card-text fw-bold text-primary mb-3">${{ p.precio }}</p>
-                            <button class="view-more-btn">Ver más</button>
+                        <div class="card-body text-center">
+                            <h5 class="card-title">{{ p.nombre }}</h5>
                         </div>
                     </div>
                 </div>
                 {% empty %}
                 <div class="col-12">
-                    <div class="empty-message">No se encontraron productos.</div>
+                    <div class="alert alert-warning text-center">No se encontraron productos.</div>
                 </div>
                 {% endfor %}
             </div>
-        </div>
+        </section>
 
-        <!-- Obras Section -->
-        <div class="mb-5">
-            <h2 class="section-title">Obras</h2>
+        <section class="mb-5">
+            <h2 class="text-center fw-bold mb-4">Obras</h2>
             <div class="row g-4">
                 {% for o in obras %}
-                <div class="col-md-4">
-                    <div class="card">
-                        <img src="{{ o.imagen.url }}" alt="{{ o.titulo }}" class="card-img-top">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title fw-bold mb-3">{{ o.titulo }}</h5>
-                            <p class="card-text flex-grow-1">{{ o.descripcion }}</p>
-                            <button class="view-more-btn mt-3">Ver más</button>
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="row g-0 align-items-center">
+                            <div class="col-md-4">
+                                <img src="{{ o.imagen.url }}" alt="{{ o.nombre }}" class="img-fluid rounded-start">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">{{ o.nombre }}</h5>
+                                    <p class="card-text">{{ o.descripcion }}</p>
+                                    <a href="#" class="btn btn-outline-primary">Ver más</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 {% empty %}
                 <div class="col-12">
-                    <div class="empty-message">No se encontraron obras.</div>
+                    <div class="alert alert-warning text-center">No se encontraron obras.</div>
                 </div>
                 {% endfor %}
             </div>
-        </div>
+        </section>
+
+        <section class="mb-5">
+            <h2 class="text-center fw-bold mb-4">Artistas</h2>
+            <div class="row g-4">
+                {% for a in artistas %}
+                <div class="col-md-4">
+                    <div class="card h-100 text-center">
+                        <img src="{{ a.imagen.url }}" alt="{{ a.nombre }}" class="card-img-top rounded-circle mx-auto mt-3" style="width: 150px; height: 150px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ a.usuario }}</h5>
+                            <a href="#" class="btn btn-outline-primary mt-3">Ver más</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-warning text-center">No se encontraron artistas.</div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
     </div>
+
+    {% include '../components/footer.html' %}
+
 </body>
 
 </html>

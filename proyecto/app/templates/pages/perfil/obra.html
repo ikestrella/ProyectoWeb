@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obras</title>
+</head>
+
+<body>
+    <header>{% include '../../components/toolbar.html' %}</header>
+
+    <h1>Tus Obras</h1>
+    {% if obras %}
+    <ul>
+        {% for obra in obras %}
+        <li>{{ obra.titulo }} - {{ obra.descripcion }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No tienes obras registradas.</p>
+    {% endif %}
+
+    {% include '../../components/footer.html' %}
+</body>
+
+</html>

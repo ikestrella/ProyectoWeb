@@ -12,11 +12,11 @@
 
         <div class="nav-links">
             <a href="{% url 'inicio' %}">Inicio</a>
-            <a href="#productos">Productos</a>
-            <a href="#contactanos">Contáctanos</a>
+            <a href="{% url 'mostrarObras' %}">Obras</a>
+            <a href="{% url 'mostrarProductos' %}">Productos</a>
             <a href="#artistas">Artistas</a>
             <a href="{% url 'perfil' %}">Perfil</a>
-            <button class="register-btn">Registrate</button>
+            <a href="{% url 'login' %}" class="register-btn" style="color: white;">Login</a>
         </div>
 
         <button class="mobile-menu">
