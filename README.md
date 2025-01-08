@@ -43,10 +43,12 @@
 ⚙️ **Configuración del Proyecto**
 
 ### Prerrequisitos  
-- Python 3.10+  
-- Django 5.1.3  
+- Python 3.11.3 
+- Django 5.0
+- Bootstrap 5.0.2
+-  XAMPP 3.3.0
 - MYSQL  
--  Figma 
+- Figma 
 
 ### Instalación
 
@@ -89,10 +91,10 @@ npm start
 ## 📧 Contacto
 
 **Iam Estrella**  
-Correo:
+Correo: ikerestrella@utpl.edu.ec
 
 **Jean Alejo**
-Correo:
+Correo: jgalejo@utpl.edu.ec
 
 
 
