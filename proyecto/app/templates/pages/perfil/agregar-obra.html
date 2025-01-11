@@ -16,7 +16,7 @@
     <header>{% include '../../components/toolbar.html' %}</header>
 
     <div class="container">
-        <form method="POST" enctype="multipart/form-data" style="padding-top: 80px;">
+        <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre</label>

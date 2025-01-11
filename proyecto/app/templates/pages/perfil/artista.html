@@ -7,123 +7,84 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Artista</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    <title>Artista-{{ artista }}</title>
 </head>
 
 <body>
     <header>{% include '../../components/toolbar.html' %}</header>
 
-    <div class="container-fluid" style="padding-top: 80px;">
+    <div class="container-fluid">
         <div class="row">
-            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-                <div class="position-sticky">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+                <div class="sidebar-sticky">
+                    <div class="profile-pic">
+                        <img src="{{ artista.imagen.url }}" alt="Profile Picture" class="rounded-circle">
+                    </div>
+                    <h2 class="profile-name">{{ artista }}</h2>
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <a class="nav-link active" href="{% url 'perfil' %}">
-                                Acerca
+                                <i class="bi bi-person"></i> Acerca de mi
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'mostrarObras' %}">
-                                Obras
+                            <a class="nav-link" href="{% url 'mostrarObras' %}" style="color: black;">
+                                <i class="bi bi-star"></i> Obras
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'mostrarProductos' %}">
-                                Productos
+                            <a class="nav-link" href="{% url 'mostrarProductos' %}" style="color: black;">
+                                <i class="bi bi-grid-3x3-gap"></i> Productos
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#calendario">
-                                Calendario
+                            <a class="nav-link" href="#calendario" style="color: black;">
+                                <i class="bi bi-calendar"></i> Eventos
                             </a>
                         </li>
                     </ul>
                 </div>
             </nav>
 
-
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="alert alert-success text-center">
-                    <img src="{{ artista.imagen.url }}" alt="foto">
+                    <img src="{{ artista.imagen.url }}" alt="foto" class="img-fluid">
                     <h1>Artista: {{ artista }}</h1>
-                    <form method="POST" action="{% url 'logout' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Cerrar sesión</button>
-                    </form>
                 </div>
 
-                <section id="about" class="about-section">
-                    <div class="about-content">
-                        <h2>Acerca</h2>
-                        <p>{{ artista.usuario }} - {{ artista.acerca }}</p>
+                <section id="about" class="about-section container">
+                    <h2 class="acerca-title">Acerca</h2>
+                    <div class="row">
+                        <div class="col-md-12 about-content">
+                            <div class="acerca-description">
+                                <p>{{ artista.usuario }} - {{ artista.acerca }}</p>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
-                <section id="obras">
-                    <h2>Obras</h2>
-                    <table class="table table-light table-hover">
-                        <thead class="thead-light">
-                            <tr>
-                                <th scope="row">Nombre</th>
-                                <th scope="row">Descripción</th>
-                                <th scope="row">Imagen</th>
-                            </tr>
-                        </thead>
-                        <tbody class="table-group-divider">
-                            {% for o in obras %}
-                            <tr>
-                                <td>{{ o.nombre }}</td>
-                                <td>{{ o.descripcion }}</td>
-                                <td>
-                                    <img class="img-thumbnail" width="100" src="{{ o.imagen.url }}"
-                                        alt="{{ o.nombre }}">
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    <form method="POST" action="{% url 'agregarObra' %}">
-                        {% csrf_token %}
-                        <button class="btn btn-primary">Agregar Obra</button>
-                    </form>
-                </section>
-
-                <section id="productos">
-                    <h2>Productos</h2>
-                    <table class="table table-light table-hover">
-                        <thead class="thead-light">
-                            <tr>
-                                <th scope="row">Nombre</th>
-                                <th scope="row">Descripción</th>
-                                <th scope="row">Precio</th>
-                                <th scope="row">Imagen</th>
-                            </tr>
-                        </thead>
-                        <tbody class="table-group-divider">
-                            {% for p in productos %}
-                            <tr>
-                                <td>{{ p.nombre }}</td>
-                                <td>{{ p.descripcion }}</td>
-                                <td>{{ p.precio }}$</td>
-                                <td>
-                                    <img class="img-thumbnail" width="100" src="{{ p.imagen.url }}"
-                                        alt="{{ p.nombre }}">
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    <form method="POST" action="{% url 'agregarProducto' %}">
-                        {% csrf_token %}
-                        <button class="btn btn-primary">Agregar Producto</button>
-                    </form>
-                </section>
                 <br>
             </main>
         </div>
     </div>
+    <div class="contact-overlay">
+        <button class="contact-toggle-btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseContact"
+            aria-expanded="false" aria-controls="collapseContact">
+            <span class="arrow"><</span> Contacto
+        </button>
+        <div id="collapseContact" class="collapse" aria-labelledby="headingContact">
+            <div class="contact-box" style="font-size: 10px;">
+                <p><strong>Correo</strong>: <a href="{{ artista.correo }}"> {{ artista.correo }} </a></p>
+                <p><strong>Número Contacto</strong></p>
+                <p>{{ artista.ncontacto }}</p>
+            </div>
+        </div>
+    </div>
+
     <footer>{% include '../../components/footer.html' %}</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

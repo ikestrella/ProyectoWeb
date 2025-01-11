@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -16,20 +16,19 @@
     </header>
 
     <section class="hero text-white text-center py-5" style="background: url('/media/fondo.png') no-repeat center center / cover;"> 
-        <div class="container" style="padding-top: 200px;">
-            <h1 class="display-4 fw-bold">Artistas Urbanos</h1>
-            <p class="lead">Lorem ipsum es simplemente el texto de relleno de las imprentas y archivos de texto.</p>
-            <a href="#" class="btn btn-primary btn-lg mt-4">Regístrate</a>
+        <div class="container">
+            <h1 class="display-4 fw-bold">Productos de<br>artistas Urbanos</h1>
+            <p class="lead">Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T.: persona que se dedica a la imprenta) desconocido usó una galería de textos</p>
         </div>
     </section>
 
     <div class="container mt-5">
         <section class="mb-5">
-            <h2 class="text-center fw-bold mb-4">Productos</h2>
+            <h2 class="text-center fw-bold mb-4 section-title">Nuestros productos</h2>
             <div class="row g-4">
                 {% for p in productos %}
                 <div class="col-md-4">
-                    <div class="card h-100">
+                    <div class="card h-100 border-0 shadow-sm">
                         <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}" class="card-img-top">
                         <div class="card-body text-center">
                             <h5 class="card-title">{{ p.nombre }}</h5>
@@ -38,27 +37,30 @@
                 </div>
                 {% empty %}
                 <div class="col-12">
-                    <div class="alert alert-warning text-center">No se encontraron productos.</div>
+                    <div class="alert alert-warning text-center empty-message">No se encontraron productos.</div>
                 </div>
                 {% endfor %}
             </div>
         </section>
+    </div>
 
-        <section class="mb-5">
-            <h2 class="text-center fw-bold mb-4">Obras</h2>
+    <section class="mb-5 obras-section" style="background-color: #FFF8E7; padding: 2rem 0;">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-4 section-title">Obras</h2>
             <div class="row g-4">
                 {% for o in obras %}
                 <div class="col-md-6">
                     <div class="card h-100 border-0 shadow-sm">
                         <div class="row g-0 align-items-center">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <img src="{{ o.imagen.url }}" alt="{{ o.nombre }}" class="img-fluid rounded-start">
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <div class="card-body">
+                                    <p class="small text-muted">{{ o.artista }}</p>
                                     <h5 class="card-title fw-bold">{{ o.nombre }}</h5>
                                     <p class="card-text">{{ o.descripcion }}</p>
-                                    <a href="#" class="btn btn-outline-primary">Ver más</a>
+                                    <a href="#" class="btn view-more-btn">Ver más →</a>
                                 </div>
                             </div>
                         </div>
@@ -66,28 +68,30 @@
                 </div>
                 {% empty %}
                 <div class="col-12">
-                    <div class="alert alert-warning text-center">No se encontraron obras.</div>
+                    <div class="alert alert-warning text-center empty-message">No se encontraron obras.</div>
                 </div>
                 {% endfor %}
             </div>
-        </section>
+        </div>
+    </section>
 
+    <div class="container mt-5">
         <section class="mb-5">
-            <h2 class="text-center fw-bold mb-4">Artistas</h2>
+            <h2 class="text-center fw-bold mb-4 section-title">Nuestros artistas</h2>
             <div class="row g-4">
                 {% for a in artistas %}
                 <div class="col-md-4">
-                    <div class="card h-100 text-center">
+                    <div class="card h-100 text-center border-0 shadow-sm">
                         <img src="{{ a.imagen.url }}" alt="{{ a.nombre }}" class="card-img-top rounded-circle mx-auto mt-3" style="width: 150px; height: 150px; object-fit: cover;">
                         <div class="card-body">
                             <h5 class="card-title">{{ a.usuario }}</h5>
-                            <a href="#" class="btn btn-outline-primary mt-3">Ver más</a>
+                            <a href="#" class="btn view-more-btn">→</a>
                         </div>
                     </div>
                 </div>
                 {% empty %}
                 <div class="col-12">
-                    <div class="alert alert-warning text-center">No se encontraron artistas.</div>
+                    <div class="alert alert-warning text-center empty-message">No se encontraron artistas.</div>
                 </div>
                 {% endfor %}
             </div>

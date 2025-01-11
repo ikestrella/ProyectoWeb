@@ -1,7 +1,7 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/toolbar.css' %}">
 
-<nav style="position: fixed; width: 100%; top: 0; z-index: 1000;">
+<nav style="width: 100%; top: 0; z-index: 1000;">
     <div class="nav-container">
         <div class="logo-section">
             <svg class="logo" viewBox="0 0 24 24">
@@ -15,8 +15,14 @@
             <a href="{% url 'mostrarObras' %}">Obras</a>
             <a href="{% url 'mostrarProductos' %}">Productos</a>
             <a href="#artistas">Artistas</a>
-            <a href="{% url 'perfil' %}">Perfil</a>
-            <a href="{% url 'login' %}" class="register-btn" style="color: white;">Login</a>
+            {% if request.session.usuario %}
+                <!-- If user is logged in -->
+                <a href="{% url 'perfil' %}" class="register-btn" style="color: white;">{{ request.session.usuario }}</a>
+                <a href="{% url 'logout' %}">Cerrar sesión</a>
+            {% else %}
+                <!-- If user is not logged in -->
+                <a href="{% url 'login' %}" class="register-btn" style="color: white;">Login</a>
+            {% endif %}
         </div>
 
         <button class="mobile-menu">

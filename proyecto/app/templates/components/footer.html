@@ -1,5 +1,44 @@
-<footer class="bg-dark text-white py-4">
-    <div class="container text-center">
-        <p class="mb-0">&copy; Urban Artists 2023-2024</p>
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/footer.css' %}">
+
+<footer class="bg-dark text-white py-5">
+    <div class="container">
+        <div class="row">
+            <!-- About Section -->
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h5 class="text-uppercase mb-4">Sobre nosotros</h5>
+                <p>ArtistasLatino es una plataforma dedicada a promover y celebrar el arte urbano de talentosos artistas de América Latina.</p>
+            </div>
+
+            <!-- Links Section -->
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h5 class="text-uppercase mb-4">Enlaces rápidos</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'inicio' %}" class="text-white">Inicio</a></li>
+                    <li><a href="#obras" class="text-white">Obras</a></li>
+                    <li><a href="#productos" class="text-white">Productos</a></li>
+                    <li><a href="#artistas" class="text-white">Artistas</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact and Social Media -->
+            <div class="col-md-4">
+                <h5 class="text-uppercase mb-4">Contacto</h5>
+                <p><i class="fas fa-envelope me-2"></i><a href="mailto:contacto@artistaslatino.com" class="text-white">contacto@artistaslatino.com</a></p>
+                <p><i class="fas fa-phone me-2"></i>+593 123 456 789</p>
+                <div class="d-flex justify-content-center">
+                    <a href="#" class="text-white mx-2"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="text-white mx-2"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-white mx-2"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <p class="mb-0">© ArtistasLatino 2023-2024. Todos los derechos reservados.</p>
+            </div>
+        </div>
     </div>
 </footer>
