@@ -20,10 +20,8 @@ def presentar_perfil(request, artista_id=None):
         artista_logueado = None
 
     if artista_id:
-        # Viendo el perfil de otro artista
         artista = get_object_or_404(Artista, id=artista_id)
     else:
-        # Viendo su propio perfil
         artista = artista_logueado
 
     obras = Obra.objects.filter(artista=artista)
@@ -120,10 +118,8 @@ def presentar_productos(request, artista_id=None):
         return redirect('login')
 
     if artista_id:
-        # Si se pasa un artista_id, usamos ese artista
         artista = get_object_or_404(Artista, id=artista_id)
     else:
-        # Si no, usamos el artista logueado
         try:
             artista = Artista.objects.get(usuario=usuario)
         except Artista.DoesNotExist:
@@ -158,12 +154,9 @@ def editar_producto(request, producto_id):
         producto.nombre = nombre
         producto.descripcion = descripcion
         producto.precio = precio
-        
-        # Handle image upload
         if imagen:
             producto.imagen = imagen
         else:
-            # If no image was uploaded, keep the existing one
             messages.add_message(request, messages.WARNING, 'Se mantuvo la imagen actual debido a que no se seleccionó una nueva.')
 
         try:
@@ -210,10 +203,8 @@ def presentar_obras(request, artista_id=None):
         return redirect('login')
 
     if artista_id:
-        # Si se pasa un artista_id, usamos ese artista
         artista = get_object_or_404(Artista, id=artista_id)
     else:
-        # Si no, usamos el artista logueado
         try:
             artista = Artista.objects.get(usuario=usuario)
         except Artista.DoesNotExist:
@@ -242,16 +233,13 @@ def editar_obra(request, obra_id):
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
         descripcion = request.POST.get('descripcion')
-        imagen = request.FILES.get('imagen')  # Obtener el archivo de imagen si se subió
+        imagen = request.FILES.get('imagen')
 
         obra.nombre = nombre
         obra.descripcion = descripcion
-        
-        # Handle image upload
         if imagen:
-            obra.imagen = imagen  # Asignar la nueva imagen si se proporcionó una
+            obra.imagen = imagen
         else:
-            # Si no se subió una imagen, mantener la actual
             messages.add_message(request, messages.WARNING, 'Se mantuvo la imagen actual debido a que no se seleccionó una nueva.')
 
         try:
