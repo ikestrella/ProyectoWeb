@@ -15,10 +15,13 @@
         {% include '../components/toolbar.html' %}
     </header>
 
-    <section class="hero text-white text-center py-5" style="background: url('/media/fondo.png') no-repeat center center / cover;"> 
+    <section class="hero text-white text-center py-5"
+        style="background: url('/media/fondo.png') no-repeat center center / cover;">
         <div class="container">
             <h1 class="display-4 fw-bold">Productos de<br>artistas Urbanos</h1>
-            <p class="lead">Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T.: persona que se dedica a la imprenta) desconocido usó una galería de textos</p>
+            <p class="lead">Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem
+                Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N.
+                del T.: persona que se dedica a la imprenta) desconocido usó una galería de textos</p>
         </div>
     </section>
 
@@ -82,10 +85,12 @@
                 {% for a in artistas %}
                 <div class="col-md-4">
                     <div class="card h-100 text-center border-0 shadow-sm">
-                        <img src="{{ a.imagen.url }}" alt="{{ a.nombre }}" class="card-img-top rounded-circle mx-auto mt-3" style="width: 150px; height: 150px; object-fit: cover;">
+                        <img src="{{ a.imagen.url }}" alt="{{ a.nombre }}"
+                            class="card-img-top rounded-circle mx-auto mt-3"
+                            style="width: 150px; height: 150px; object-fit: cover;">
                         <div class="card-body">
                             <h5 class="card-title">{{ a.usuario }}</h5>
-                            <a href="#" class="btn view-more-btn">→</a>
+                            <a href="{% url 'perfil' a.id %}" class="btn view-more-btn">→</a>
                         </div>
                     </div>
                 </div>

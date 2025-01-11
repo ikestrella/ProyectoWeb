@@ -9,12 +9,33 @@ def logout_u(request):
     logout(request)
     return redirect('login')
 
-def presentar_perfil(request):
+def presentar_perfil(request, artista_id=None):
     usuario = request.session.get('usuario')
-    artista = Artista.objects.get(usuario=usuario)
+    if usuario:
+        try:
+            artista_logueado = Artista.objects.get(usuario=usuario)
+        except Artista.DoesNotExist:
+            return HttpResponse("El artista no existe.", status=404)
+    else:
+        artista_logueado = None
+
+    if artista_id:
+        # Viendo el perfil de otro artista
+        artista = get_object_or_404(Artista, id=artista_id)
+    else:
+        # Viendo su propio perfil
+        artista = artista_logueado
+
     obras = Obra.objects.filter(artista=artista)
-    productos = Producto.objects.filter(artista=artista)    
-    return render(request, 'pages/perfil/artista.html', {'obras': obras, 'productos': productos, 'artista': artista})
+    productos = Producto.objects.filter(artista=artista)
+    
+    context = {
+        'obras': obras,
+        'productos': productos,
+        'artista': artista,
+        'es_mi_perfil': artista_logueado == artista if artista_logueado else False
+    }
+    return render(request, 'pages/perfil/artista.html', context)
 
 def login(request):
     if request.method == 'POST':
@@ -93,23 +114,28 @@ def agregar_producto(request):
             
     return render(request, 'pages/perfil/agregar-producto.html')
 
-def presentar_productos(request):
+def presentar_productos(request, artista_id=None):
     usuario = request.session.get('usuario')
-    if not usuario:
+    if not usuario and not artista_id:
         return redirect('login')
 
-    try:
-        artista = Artista.objects.get(usuario=usuario)
-    except Artista.DoesNotExist:
-        return HttpResponse("El artista no existe.", status=404)
+    if artista_id:
+        # Si se pasa un artista_id, usamos ese artista
+        artista = get_object_or_404(Artista, id=artista_id)
+    else:
+        # Si no, usamos el artista logueado
+        try:
+            artista = Artista.objects.get(usuario=usuario)
+        except Artista.DoesNotExist:
+            return HttpResponse("El artista no existe.", status=404)
 
     productos = Producto.objects.filter(artista=artista)
     context = {
         'productos': productos,
-        'artista': artista
+        'artista': artista,
+        'es_mi_perfil': usuario == artista.usuario if usuario else False
     }
     return render(request, 'pages/perfil/producto.html', context)
-
 
 def editar_producto(request, producto_id):
     usuario = request.session.get('usuario')
@@ -155,7 +181,6 @@ def editar_producto(request, producto_id):
     }
     return render(request, 'pages/perfil/producto.html', context)
 
-
 def eliminar_producto(request):
     usuario = request.session.get('usuario')
     if not usuario:
@@ -179,20 +204,26 @@ def eliminar_producto(request):
     else:
         return HttpResponse("Método no permitido", status=405)
 
-def presentar_obras(request):
+def presentar_obras(request, artista_id=None):
     usuario = request.session.get('usuario')
-    if not usuario:
+    if not usuario and not artista_id:
         return redirect('login')
 
-    try:
-        artista = Artista.objects.get(usuario=usuario)
-    except Artista.DoesNotExist:
-        return HttpResponse("El artista no existe.", status=404)
+    if artista_id:
+        # Si se pasa un artista_id, usamos ese artista
+        artista = get_object_or_404(Artista, id=artista_id)
+    else:
+        # Si no, usamos el artista logueado
+        try:
+            artista = Artista.objects.get(usuario=usuario)
+        except Artista.DoesNotExist:
+            return HttpResponse("El artista no existe.", status=404)
 
     obras = Obra.objects.filter(artista=artista)
     context = {
         'obras': obras,
-        'artista': artista
+        'artista': artista,
+        'es_mi_perfil': usuario == artista.usuario if usuario else False
     }
     return render(request, 'pages/perfil/obra.html', context)
 
@@ -260,3 +291,4 @@ def eliminar_obra(request):
         return redirect('mostrarObras')
     else:
         return HttpResponse("Método no permitido", status=405)
+    

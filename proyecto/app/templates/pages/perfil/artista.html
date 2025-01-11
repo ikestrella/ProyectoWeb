@@ -24,17 +24,17 @@
                     <h2 class="profile-name">{{ artista }}</h2>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link active" href="{% url 'perfil' %}">
+                            <a class="nav-link{% if 'perfil' in request.path %} active{% endif %}" href="{% if not es_mi_perfil %}{% url 'perfil' artista.id %}{% else %}{% url 'perfil' %}{% endif %}" style="color: black;">
                                 <i class="bi bi-person"></i> Acerca de mi
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'mostrarObras' %}" style="color: black;">
+                            <a class="nav-link{% if 'obras' in request.path %} active{% endif %}" href="{% if not es_mi_perfil %}{% url 'mostrarObras' artista.id %}{% else %}{% url 'mostrarObras' %}{% endif %}" style="color: black;">
                                 <i class="bi bi-star"></i> Obras
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'mostrarProductos' %}" style="color: black;">
+                            <a class="nav-link{% if 'productos' in request.path %} active{% endif %}" href="{% if not es_mi_perfil %}{% url 'mostrarProductos' artista.id %}{% else %}{% url 'mostrarProductos' %}{% endif %}" style="color: black;">
                                 <i class="bi bi-grid-3x3-gap"></i> Productos
                             </a>
                         </li>

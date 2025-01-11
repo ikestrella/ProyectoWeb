@@ -24,17 +24,17 @@
                     <h2 class="profile-name">{{ artista }}</h2>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'perfil' %}" style="color: black;">
+                            <a class="nav-link" href="{% url 'perfil' artista.id %}" style="color: black;">
                                 <i class="bi bi-person"></i> Acerca de mi
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="{% url 'mostrarObras' %}">
+                            <a class="nav-link active" href="{% if not es_mi_perfil %}{% url 'mostrarObras' artista.id %}{% else %}{% url 'mostrarObras' %}{% endif %}" style="color: black;">
                                 <i class="bi bi-star"></i> Obras
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'mostrarProductos' %}" style="color: black;">
+                            <a class="nav-link" href="{% if not es_mi_perfil %}{% url 'mostrarProductos' artista.id %}{% else %}{% url 'mostrarProductos' %}{% endif %}" style="color: black;">
                                 <i class="bi bi-grid-3x3-gap"></i> Productos
                             </a>
                         </li>
@@ -51,12 +51,14 @@
                 <section id="obras">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2 class="section-title">Obras</h2>
+                        {% if es_mi_perfil %}
                         <div class="add-obra">
                             <form method="POST" action="{% url 'agregarObra' %}">
                                 {% csrf_token %}
                                 <button class="btn btn-add">➕ Agregar Obra</button>
                             </form>
                         </div>
+                        {% endif %}
                     </div>
                     <div class="gallery">
                         {% for o in obras %}
@@ -67,10 +69,12 @@
                                     <div class="text">
                                         <h5 class="gallery-title">{{ o.nombre }}</h5>
                                         <p class="gallery-text">{{ o.descripcion }}</p>
+                                        {% if es_mi_perfil %}
                                         <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
                                             data-bs-target="#editModal{{ o.id }}">editar</button>
                                         <button class="btn btn-sm btn-danger"
                                             onclick="confirmarBorrar('{{ o.id }}')">eliminar</button>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
