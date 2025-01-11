@@ -43,10 +43,12 @@
 ⚙️ **Configuración del Proyecto**
 
 ### Prerrequisitos  
-- Python 3.10+  
-- Django 5.1.3  
+- Python 3.11.3 
+- Django 5.0
+- Bootstrap 5.0.2
+-  XAMPP 3.3.0
 - MYSQL  
--  Figma 
+- Figma 
 
 ### Instalación
 
@@ -70,17 +72,17 @@ npm start
 
 # 📱 MVP - Funcionalidades
 
-## Portal Artistas (React)
+## Portal Artistas (Bootstrap)
 - Registro/Login para artistas.
 - Subida y gestión de obras de arte.
 - Panel de métricas (visualizaciones, interacciones, ventas).
 
-## Galería Interactiva (React)
+## Galería Interactiva (Bootstrap)
 - Navegación entre obras por categorías.
 - Visualización inmersiva de las obras.
 - Filtros avanzados para explorar el contenido.
 
-## Módulo Administrador (Django)
+## Módulo Administrador (Bootstrap)
 - Gestión de usuarios y contenido.
 - Moderación de galerías y exposiciones.
 - Reportes de actividad y desempeño de la plataforma.
@@ -89,10 +91,10 @@ npm start
 ## 📧 Contacto
 
 **Iam Estrella**  
-Correo:
+Correo: ikestrella@utpl.edu.ec
 
 **Jean Alejo**
-Correo:
+Correo: jgalejo@utpl.edu.ec
 
 
 
