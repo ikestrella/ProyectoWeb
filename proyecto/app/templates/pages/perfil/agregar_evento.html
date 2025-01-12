@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/agregar_evento.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Agregar Evento</title>
+</head>
+<body>
+    <header>{% include '../../components/toolbar.html' %}</header>
+
+    <div class="container mt-5">
+        <h1>Agregar Evento</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="titulo" class="form-label">Título</label>
+                <input type="text" class="form-control" id="titulo" name="titulo" required>
+            </div>
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="ubicacion" class="form-label">Ubicación</label>
+                <input type="text" class="form-control" id="ubicacion" name="ubicacion" required>
+            </div>
+            <div class="mb-3">
+                <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
+                <input type="datetime-local" class="form-control" id="fecha_inicio" name="fecha_inicio" required>
+            </div>
+            <div class="mb-3">
+                <label for="fecha_fin" class="form-label">Fecha de Fin (opcional)</label>
+                <input type="datetime-local" class="form-control" id="fecha_fin" name="fecha_fin">
+            </div>
+            <div class="mb-3">
+                <label for="imagen" class="form-label">Imagen del Evento</label>
+                <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Evento</button>
+        </form>
+    </div>
+    <br>
+    <br>
+
+    {% include '../../components/footer.html' %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

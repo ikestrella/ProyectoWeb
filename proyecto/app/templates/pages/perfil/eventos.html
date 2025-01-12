@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/eventos.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.css' rel='stylesheet' />
+    <title>Eventos de {{ artista }}</title>
+</head>
+
+<body>
+    <header>{% include '../../components/toolbar.html' %}</header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+                <div class="sidebar-sticky">
+                    <div class="profile-pic">
+                        <img src="{{ artista.imagen.url }}" alt="Profile Picture" class="rounded-circle">
+                    </div>
+                    <h2 class="profile-name">{{ artista }}</h2>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'perfil' artista.id %}" style="color: black;">
+                                <i class="bi bi-person"></i> Acerca de mi
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                                href="{% if not es_mi_perfil %}{% url 'mostrarObras' artista.id %}{% else %}{% url 'mostrarObras' %}{% endif %}"
+                                style="color: black;">
+                                <i class="bi bi-star"></i> Obras
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                                href="{% if not es_mi_perfil %}{% url 'mostrarProductos' artista.id %}{% else %}{% url 'mostrarProductos' %}{% endif %}"
+                                style="color: black;">
+                                <i class="bi bi-grid-3x3-gap"></i> Productos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active"
+                                href="{% if not es_mi_perfil %}{% url 'mostrarEventos' artista.id %}{% else %}{% url 'mostrarEventos' %}{% endif %}">
+                                <i class="bi bi-calendar"></i> Eventos
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="col-md-3 col-lg-2 d-md-block event-list-sidebar">
+                <h3 class="event-list-title">Lista de Eventos</h3>
+                
+                <div class="mb-3">
+                    <form action="" method="get">
+                        <input type="text" name="q" class="form-control" placeholder="Buscar eventos..." value="{{ search_query }}">
+                        <button type="submit" class="btn btn-outline-secondary" style="margin-top: 5px;">Buscar</button>
+                    </form>
+                </div>
+
+                <div class="event-list">
+                    {% for evento in eventos_page %}
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ evento.titulo }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ evento.fecha_inicio|date:"d M Y H:i" }} - {% if evento.fecha_fin %}{{ evento.fecha_fin|date:"d M Y H:i" }}{% else %}Sin Fecha De Fin{% endif %}</h6>
+                            <p class="card-text">{{ evento.descripcion|truncatewords:10 }}</p>
+                            <p class="card-text"><small class="text-muted">Ubicación: {{ evento.ubicacion }}</small></p>
+                            {% if es_mi_perfil %}
+                            <a href="edit{{evento.id}}" class="btn btn-sm btn-primary btn-editar" data-bs-toggle="modal" data-bs-target="#editEventModal{{ evento.id }}">Editar</a>
+                            <button class="btn btn-sm btn-danger btn-eliminar" onclick="confirmarEliminar('{{ evento.id }}')">Eliminar</button>
+                            {% endif %}
+                            <a href="#" class="btn btn-sm btn-success btn-ver">Ver</a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="alert alert-warning text-center">No se encontraron eventos.</div>
+                    {% endfor %}
+                </div>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        {% if eventos_page.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ eventos_page.previous_page_number }}&q={{ search_query|urlencode }}">Previous</a></li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                        {% endif %}
+                        
+                        {% if eventos_page.number > 1 %}
+                        <li class="page-item"><a class="page-link" href="?page={{ eventos_page.number|add:'-1' }}&q={{ search_query|urlencode }}">{{ eventos_page.number|add:'-1' }}</a></li>
+                        {% endif %}
+                        
+                        <li class="page-item active"><span class="page-link">{{ eventos_page.number }} <span class="sr-only"></span></span></li>
+                        
+                        {% if eventos_page.number < eventos_page.paginator.num_pages %}
+                        <li class="page-item"><a class="page-link" href="?page={{ eventos_page.number|add:'1' }}&q={{ search_query|urlencode }}">{{ eventos_page.number|add:'1' }}</a></li>
+                        {% endif %}
+                        
+                        {% if eventos_page.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ eventos_page.next_page_number }}&q={{ search_query|urlencode }}">Next</a></li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            <main class="col-md-6 ms-sm-auto col-lg-8 px-md-4">
+                <section id="eventos">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="section-title">Calendario de Eventos</h2>
+                        {% if es_mi_perfil %}
+                        <div class="add-evento">
+                            <a href="{% url 'agregarEvento' %}" class="btn btn-add">➕ Agregar Evento</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div id='calendar'></div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-labelledby="eventDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventDetailsModalLabel">Detalles del Evento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6 id="tituloEvento"></h6>
+                    <p><strong>Fecha de Inicio:</strong> <span id="inicioEvento"></span></p>
+                    <p><strong>Fecha de Fin:</strong> <span id="finEvento"></span></p>
+                    <p><strong>Descripción:</strong> <span id="descripcionEvento"></span></p>
+                    <p><strong>Ubicación:</strong> <span id="lugarEvento"></span></p>
+                </div>
+                <div class="modal-footer">
+                    {% if es_mi_perfil %}
+                    <a href="#" class="btn btn-sm btn-primary btn-editar" id="btnEditEvent" data-bs-toggle="modal">Editar</a>
+                    <button class="btn btn-sm btn-danger btn-eliminar" id="btnDeleteEvent">Eliminar</button>
+                    {% endif %}
+                    <a href="#" class="btn btn-sm btn-success btn-ver">Ver</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if es_mi_perfil %}
+    {% for evento in eventos_all %}
+    <div class="modal fade" id="editEventModal{{ evento.id }}" tabindex="-1" aria-labelledby="editEventModalLabel{{ evento.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" enctype="multipart/form-data" action="{% url 'editarEvento' evento.id %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="titulo{{ evento.id }}" class="form-label">Título</label>
+                            <input type="text" class="form-control" id="titulo{{ evento.id }}" name="titulo" value="{{ evento.titulo }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descripcion{{ evento.id }}" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion{{ evento.id }}" name="descripcion" required>{{ evento.descripcion }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ubicacion{{ evento.id }}" class="form-label">Ubicación</label>
+                            <input type="text" class="form-control" id="ubicacion{{ evento.id }}" name="ubicacion" value="{{ evento.ubicacion }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fecha_inicio{{ evento.id }}" class="form-label">Fecha de Inicio</label>
+                            <input type="datetime-local" class="form-control" id="fecha_inicio{{ evento.id }}" name="fecha_inicio" value="{{ evento.fecha_inicio|date:'Y-m-d'|time:'H:i' }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fecha_fin{{ evento.id }}" class="form-label">Fecha de Fin (opcional)</label>
+                            <input type="datetime-local" class="form-control" id="fecha_fin{{ evento.id }}" name="fecha_fin" value="{% if evento.fecha_fin %}{{ evento.fecha_fin|date:'Y-m-d'|time:'H:i' }}{% endif %}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="imagen{{ evento.id }}" class="form-label">Imagen del Evento</label>
+                            {% if evento.imagen %}
+                            <div>
+                                <img src="{{ evento.imagen.url }}" alt="Imagen Actual del Evento" class="img-fluid mb-2" style="max-height: 150px;">
+                                <p class="small text-muted">Imagen actual: {{ evento.imagen.name }}</p>
+                            </div>
+                            {% endif %}
+                            <input type="file" class="form-control" id="imagen{{ evento.id }}" name="imagen" accept="image/*">
+                            <br>
+                            <span class="badge bg-secondary">No Seleccionar Imagen Para Mantener la imagen actual</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% include '../../components/footer.html' %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.js'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var eventosData = JSON.parse('{{ eventos_json|safe }}');
+            
+            if (eventosData.length > 0) {
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    locale: 'es',
+                    events: eventosData,
+                    eventClick: function(info) {
+                        document.getElementById('tituloEvento').textContent = info.event.title;
+                        document.getElementById('inicioEvento').textContent = info.event.start.toLocaleString();
+                        document.getElementById('finEvento').textContent = info.event.end ? info.event.end.toLocaleString() : 'Sin Fecha de Fin';
+                        document.getElementById('descripcionEvento').textContent = info.event.extendedProps.description;
+                        document.getElementById('lugarEvento').textContent = info.event.extendedProps.location;
+                        
+                        var editBtn = document.getElementById('btnEditEvent');
+                        var deleteBtn = document.getElementById('btnDeleteEvent');
+                        
+                        if ('{{ es_mi_perfil|yesno:"true,false" }}' === 'true') {
+                            if (editBtn) editBtn.style.display = 'inline-block';
+                            if (deleteBtn) deleteBtn.style.display = 'inline-block';
+                            if (editBtn) editBtn.setAttribute('data-bs-target', '#editEventModal' + info.event.id);
+                            if (deleteBtn) deleteBtn.setAttribute('onclick', 'confirmarEliminar("' + info.event.id + '")');
+                        } else {
+                            if (editBtn) editBtn.style.display = 'none';
+                            if (deleteBtn) deleteBtn.style.display = 'none';
+                        }
+                        
+                        var modalElement = document.getElementById('eventDetailsModal');
+                        var modal = new bootstrap.Modal(modalElement);
+                        modal.show();
+                    }
+                });
+                calendar.render();
+            } else {
+                document.getElementById('calendar').innerHTML = '<div class="alert alert-warning text-center empty-message">No se encontraron eventos.</div>';
+            }
+        });
+        
+        function confirmarEliminar(eventoId) {
+            if (confirm('¿Estás seguro de que deseas eliminar este evento?')) {
+                window.location.href = "{% url 'eliminarEvento' %}?id=" + eventoId;
+            }
+        }
+    </script>
+</body>
+
+</html>

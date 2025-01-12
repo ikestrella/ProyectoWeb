@@ -24,7 +24,7 @@
                     <h2 class="profile-name">{{ artista }}</h2>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link{% if 'perfil' in request.path %} active{% endif %}" href="{% if not es_mi_perfil %}{% url 'perfil' artista.id %}{% else %}{% url 'perfil' %}{% endif %}" style="color: black;">
+                            <a class="nav-link{% if 'perfil' in request.path %} active{% endif %}" href="{% if not es_mi_perfil %}{% url 'perfil' artista.id %}{% else %}{% url 'perfil' %}{% endif %}">
                                 <i class="bi bi-person"></i> Acerca de mi
                             </a>
                         </li>
@@ -39,7 +39,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#calendario" style="color: black;">
+                            <a class="nav-link" href="{% if not es_mi_perfil %}{% url 'mostrarEventos' artista.id %}{% else %}{% url 'mostrarEventos' %}{% endif %}" style="color: black;">
                                 <i class="bi bi-calendar"></i> Eventos
                             </a>
                         </li>

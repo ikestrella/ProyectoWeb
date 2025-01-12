@@ -16,5 +16,10 @@ urlpatterns = [
     path('perfil/productos/<int:artista_id>/', views.presentar_productos, name='mostrarProductos'),
     path('perfil/producto/agregar/', views.agregar_producto, name='agregarProducto'),
     path('perfil/producto/editar/<int:producto_id>/', views.editar_producto, name='editarProducto'),
-    path('perfil/producto/eliminar/', views.eliminar_producto, name='eliminarProducto')
+    path('perfil/producto/eliminar/', views.eliminar_producto, name='eliminarProducto'),
+    path('perfil/evento/agregar/', views.agregar_evento, name='agregarEvento'),
+    path('perfil/evento/editar/<int:evento_id>/', views.editar_evento, name='editarEvento'),
+    path('perfil/evento/eliminar/', views.eliminar_evento, name='eliminarEvento'),
+    path('perfil/eventos/', views.presentar_eventos, name='mostrarEventos'),
+    path('perfil/eventos/<int:artista_id>/', views.presentar_eventos, name='mostrarEventos')
 ]

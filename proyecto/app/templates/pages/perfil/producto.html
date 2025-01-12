@@ -34,12 +34,13 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="{% if not es_mi_perfil %}{% url 'mostrarProductos' artista.id %}{% else %}{% url 'mostrarProductos' %}{% endif %}" style="color: black;">
+                            <a class="nav-link active" href="{% if not es_mi_perfil %}{% url 'mostrarProductos' artista.id %}{% else %}{% url 'mostrarProductos' %}{% endif %}">
                                 <i class="bi bi-grid-3x3-gap"></i> Productos
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#calendario" style="color: black;">
+                            <a class="nav-link"
+                                href="{% if not es_mi_perfil %}{% url 'mostrarEventos' artista.id %}{% else %}{% url 'mostrarEventos' %}{% endif %}" style="color: black;">
                                 <i class="bi bi-calendar"></i> Eventos
                             </a>
                         </li>
@@ -74,10 +75,13 @@
                                         <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ p.id }}">editar</button>
                                         <button class="btn btn-sm btn-danger" onclick="confirmarBorrar('{{ p.id }}')">eliminar</button>
                                         {% endif %}
+                                        <button class="btn btn-sm btn-warning">Ver</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        {% empty %}
+                        <div class="alert alert-warning text-center">No se encontraron productos.</div>
                         {% endfor %}
                     </div>
                 </section>
@@ -111,8 +115,14 @@
                             <input type="number" step="0.01" class="form-control" id="precio{{ p.id }}" name="precio" value="{{ p.precio }}" required>
                         </div>
                         <div class="mb-3">
+                            <div>
+                                <img src="{{ p.imagen.url }}" alt="Imagen Actual del Producto" class="img-fluid mb-2" style="max-height: 150px;">
+                                <p class="small text-muted">Imagen actual: {{ p.imagen.name }}</p>
+                            </div>
                             <label for="imagen{{ p.id }}" class="form-label">Imagen</label>
-                            <input type="file" class="form-control" id="imagen{{ p.id }}" name="imagen" accept="image/*" required>
+                            <input type="file" class="form-control" id="imagen{{ p.id }}" name="imagen" accept="image/*">
+                            <br>
+                            <span class="badge bg-secondary">No Seleccionar Imagen Para Mantener la imagen actual</span>
                         </div>
                     </div>
                     <div class="modal-footer">

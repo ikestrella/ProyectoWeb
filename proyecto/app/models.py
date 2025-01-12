@@ -46,3 +46,22 @@ class Obra(models.Model):
 
     def __str__(self):
         return 'Obra: ' + self.nombre + ' Por: ' + self.artista.usuario
+
+
+class Evento(models.Model):
+    artista = models.ForeignKey(Artista, db_column='artista', on_delete=models.SET_NULL, related_name='eventos', null=True)
+    titulo = models.CharField(max_length=200)
+    descripcion = models.TextField()
+    ubicacion = models.CharField(max_length=255)
+    imagen = models.ImageField(upload_to='eventos/', null=True, blank=True)  # Añadido
+    fecha_inicio = models.DateTimeField()
+    fecha_fin = models.DateTimeField(null=True, blank=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'evento'
+        ordering = ['-fecha_inicio']
+
+    def __str__(self):
+        return self.titulo

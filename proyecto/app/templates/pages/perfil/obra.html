@@ -29,7 +29,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="{% if not es_mi_perfil %}{% url 'mostrarObras' artista.id %}{% else %}{% url 'mostrarObras' %}{% endif %}" style="color: black;">
+                            <a class="nav-link active" href="{% if not es_mi_perfil %}{% url 'mostrarObras' artista.id %}{% else %}{% url 'mostrarObras' %}{% endif %}">
                                 <i class="bi bi-star"></i> Obras
                             </a>
                         </li>
@@ -39,7 +39,8 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#calendario" style="color: black;">
+                            <a class="nav-link"
+                                href="{% if not es_mi_perfil %}{% url 'mostrarEventos' artista.id %}{% else %}{% url 'mostrarEventos' %}{% endif %}" style="color: black;">
                                 <i class="bi bi-calendar"></i> Eventos
                             </a>
                         </li>
@@ -75,10 +76,13 @@
                                         <button class="btn btn-sm btn-danger"
                                             onclick="confirmarBorrar('{{ o.id }}')">eliminar</button>
                                         {% endif %}
+                                        <button class="btn btn-sm btn-warning">Ver</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        {% empty %}
+                        <div class="alert alert-warning text-center">No se encontraron obras.</div>
                         {% endfor %}
                     </div>
                 </section>
@@ -110,9 +114,14 @@
                                 required>{{ o.descripcion }}</textarea>
                         </div>
                         <div class="mb-3">
+                            <div>
+                                <img src="{{ o.imagen.url }}" alt="Imagen Actual de la Obra" class="img-fluid mb-2" style="max-height: 150px;">
+                                <p class="small text-muted">Imagen actual: {{ o.imagen.name }}</p>
+                            </div>
                             <label for="imagen{{ o.id }}" class="form-label">Imagen</label>
-                            <input type="file" class="form-control" id="imagen{{ o.id }}" name="imagen"
-                                accept="image/*">
+                            <input type="file" class="form-control" id="imagen{{ o.id }}" name="imagen"accept="image/*" value="{{ o.id }}">
+                            <br>
+                            <span class="badge bg-secondary">No Seleccionar Imagen Para Mantener la imagen actual</span>
                         </div>
                     </div>
                     <div class="modal-footer">
