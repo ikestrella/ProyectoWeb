@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/p-obras.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Obras</title>
+</head>
+
+<body>
+    <header>
+        {% include '../components/toolbar.html' %}
+    </header>
+
+    <div class="page-container">
+        <div class="page-container">
+            <div class="search-wrapper">
+                <form action="" method="get" class="search-form">
+                    <div class="search-input-container">
+                        <input type="text" name="q" placeholder="Buscar obras..." value="{{ request.GET.q }}">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </div>
+                </form>
+            </div>
+            <main class="obras-grid">
+                {% for obra in obras %}
+                <div class="obra-card">
+                    <div class="obra-image">
+                        <img src="{{ obra.imagen.url }}" alt="{{ obra.nombre }}">
+                    </div>
+                    <div class="obra-info">
+                        <p class="obra-nombre">{{ obra.nombre }}</p>
+
+                        <div class="obra-foto">
+                            <a href="{% url 'perfil' obra.artista.id %}">
+                                <img src="{{ obra.artista.imagen.url }}"
+                                    alt="Foto del artista {{ obra.artista.usuario }}">
+                            </a>
+                        </div>
+                        <p class="obra-artista">{{ obra.artista.usuario }}</p>
+                        <p class="obra-descripcion">{{ obra.descripcion }}</p>
+                        <a href="#" class="view-obra-btn">VER</a>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No se encontraron obras.</p>
+                {% endfor %}
+            </main>
+
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if obras.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1&q={{ search_query|urlencode }}">Primera</a>
+                    </li>
+                    <li class="page-item"><a class="page-link"
+                            href="?page={{ obras.previous_page_number }}&q={{ search_query|urlencode }}">Anterior</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in obras.paginator.page_range %}
+                    {% if obras.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }} <span
+                                class="sr-only">(current)</span></span></li>
+                    {% elif num > obras.number|add:'-3' and num < obras.number|add:'3' %} <li class="page-item"><a
+                            class="page-link" href="?page={{ num }}&q={{ search_query|urlencode }}">{{ num }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if obras.has_next %}
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{ obras.next_page_number }}&q={{ search_query|urlencode }}">Siguiente</a>
+                        </li>
+                        <li class="page-item"><a class="page-link"
+                                href="?page={{ obras.paginator.num_pages }}&q={{ search_query|urlencode }}">Última</a>
+                        </li>
+                        {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <footer>{% include '../components/footer.html' %}</footer>
+
+</body>
+
+</html>

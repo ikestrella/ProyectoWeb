@@ -57,7 +57,7 @@
                 
                 <div class="mb-3">
                     <form action="" method="get">
-                        <input type="text" name="q" class="form-control" placeholder="Buscar eventos..." value="{{ search_query }}">
+                        <input type="text" name="q" class="form-control" placeholder="Buscar eventos..." value="{{ request.GET.q }}">
                         <button type="submit" class="btn btn-outline-secondary" style="margin-top: 5px;">Buscar</button>
                     </form>
                 </div>

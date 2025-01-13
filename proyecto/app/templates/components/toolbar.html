@@ -1,5 +1,7 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/toolbar.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
 
 <nav style="width: 100%; top: 0; z-index: 1000;">
     <div class="nav-container">
@@ -12,15 +14,13 @@
 
         <div class="nav-links">
             <a href="{% url 'inicio' %}">Inicio</a>
-            <a href="{% url 'mostrarObras' %}">Obras</a>
-            <a href="{% url 'mostrarProductos' %}">Productos</a>
-            <a href="#artistas">Artistas</a>
+            <a href="{% url 'mostrarPaginaObras' %}">Obras</a>
+            <a href="{% url 'mostrarPaginaProductos' %}">Productos</a>
+            <a href="{% url 'mostrarArtistas' %}">Artistas</a>
             {% if request.session.usuario %}
-                <!-- If user is logged in -->
                 <a href="{% url 'perfil' %}" class="register-btn" style="color: white;">{{ request.session.usuario }}</a>
                 <a href="{% url 'logout' %}">Cerrar sesión</a>
             {% else %}
-                <!-- If user is not logged in -->
                 <a href="{% url 'login' %}" class="register-btn" style="color: white;">Login</a>
             {% endif %}
         </div>

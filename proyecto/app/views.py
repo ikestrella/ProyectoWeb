@@ -1,7 +1,8 @@
 import json
-from django.core.paginator import Paginator
-from django.http import HttpResponse, HttpResponseRedirect
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
+from django.db.models import Q
 from django.contrib.auth import logout
 from django.contrib import messages
 from django.urls import reverse
@@ -425,3 +426,76 @@ def eliminar_evento(request):
         return redirect('mostrarEventos')
     else:
         return HttpResponse("Método no permitido", status=405)
+
+
+
+
+def presentar_artistas(request):
+    busqueda = request.GET.get("q")
+    artistas = Artista.objects.all()
+
+    if busqueda:
+        artistas = Artista.objects.filter(
+            Q(usuario__icontains=busqueda) |
+            Q(correo__icontains=busqueda) |
+            Q(ncontacto__icontains=busqueda)
+        ).distinct()
+    paginator = Paginator(artistas, 6)
+    page = request.GET.get('page')
+
+    try:
+        artistas_page = paginator.page(page)
+    except PageNotAnInteger:
+        artistas_page = paginator.page(1)
+    except EmptyPage:
+        artistas_page = paginator.page(paginator.num_pages)
+
+    return render(request, 'pages/artistas.html', {'artistas': artistas_page})
+
+
+def presentar_pagina_obras(request):
+    busqueda = request.GET.get("q")
+    obras = Obra.objects.all()
+
+    if busqueda:
+        obras = Obra.objects.filter(
+            Q(titulo__icontains=busqueda) |
+            Q(descripcion__icontains=busqueda) |
+            Q(artista__usuario__icontains=busqueda)
+        ).distinct()
+
+    paginator = Paginator(obras, 6)
+    page = request.GET.get('page')
+
+    try:
+        obras_page = paginator.page(page)
+    except PageNotAnInteger:
+        obras_page = paginator.page(1)
+    except EmptyPage:
+        obras_page = paginator.page(paginator.num_pages)
+
+    return render(request, 'pages/obras.html', {'obras': obras_page})
+
+
+def presentar_pagina_productos(request):
+    busqueda = request.GET.get("q")
+    productos = Producto.objects.all()
+
+    if busqueda:
+        productos = Producto.objects.filter(
+            Q(nombre__icontains=busqueda) |
+            Q(descripcion__icontains=busqueda) |
+            Q(artista__usuario__icontains=busqueda)  # Asumiendo que hay una relación con Artista
+        ).distinct()
+
+    paginator = Paginator(productos, 6)  # 6 productos por página, ajusta según tu necesidad
+    page = request.GET.get('page')
+
+    try:
+        productos_page = paginator.page(page)
+    except PageNotAnInteger:
+        productos_page = paginator.page(1)
+    except EmptyPage:
+        productos_page = paginator.page(paginator.num_pages)
+
+    return render(request, 'pages/productos.html', {'productos': productos_page})

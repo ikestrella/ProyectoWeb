@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/artistas.css' %}">
+    <title>Artistas</title>
+</head>
+<body>
+    <header>
+        {% include '../components/toolbar.html' %}
+    </header>
+
+    <div class="page-container">
+        <div class="search-wrapper">
+            <form action="" method="get" class="search-form">
+                <div class="search-input-container">
+                    <input type="text" id="search-artists" name="q" placeholder="Buscar artistas..." value="{{request.GET.q}}">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </div>
+            </form>
+        </div>
+        <main class="artists-grid">
+            {% for a in artistas %}
+            <div class="artist-card">
+                <div class="image-container">
+                    <img src="{{ a.imagen.url }}" alt="{{ a.nombre }}">
+                </div>
+                <div class="artist-content">
+                    <h3 class="artist-name">{{ a.usuario }}</h3>
+                    <div class="artist-details">
+                        <p><span>Correo:</span> {{ a.correo }}</p>
+                        <p><span>Contacto:</span> {{ a.ncontacto }}</p>
+                        <p><span>Acerca:</span> {{ a.acerca }}</p>
+                    </div>
+                    <a href="{% url 'perfil' a.id %}" class="view-profile-btn">VER PERFIL</a>
+                </div>
+            </div>
+            {% empty %}
+            <p>No se encontraron artistas.</p>
+            {% endfor %}
+        </main>
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if artistas.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1&q={{ request.GET.q|urlencode }}">Primera</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ artistas.previous_page_number }}&q={{ request.GET.q|urlencode }}">Anterior</a></li>
+                {% endif %}
+
+                {% for num in artistas.paginator.page_range %}
+                {% if artistas.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }} <span class="sr-only">(current)</span></span></li>
+                {% elif num > artistas.number|add:'-3' and num < artistas.number|add:'3' %}
+                <li class="page-item"><a class="page-link" href="?page={{ num }}&q={{ request.GET.q|urlencode }}">{{ num }}</a></li>
+                {% endif %}
+                {% endfor %}
+
+                {% if artistas.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ artistas.next_page_number }}&q={{ request.GET.q|urlencode }}">Siguiente</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ artistas.paginator.num_pages }}&q={{ request.GET.q|urlencode }}">Última</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</body>
+</html>
