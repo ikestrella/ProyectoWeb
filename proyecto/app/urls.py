@@ -25,4 +25,5 @@ urlpatterns = [
     path('artistas/', views.presentar_artistas, name='mostrarArtistas'),
     path('obras/', views.presentar_pagina_obras, name='mostrarPaginaObras'),
     path('productos/', views.presentar_pagina_productos, name='mostrarPaginaProductos'),
+    path('perfil/evento/gestionar/<int:evento_id>/', views.gestionar_participacion, name='gestionarParticipacion')
 ]

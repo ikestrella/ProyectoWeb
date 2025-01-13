@@ -65,3 +65,22 @@ class Evento(models.Model):
 
     def __str__(self):
         return self.titulo
+    
+
+class ParticipacionEvento(models.Model):
+    ESTADOS_PARTICIPACION = [
+        ('RECHAZADO', 'Rechazado'),
+        ('PARTICIPANDO', 'Participando'),
+        ('EN_ESPERA', 'En Espera'),
+    ]
+    artista = models.ForeignKey(Artista, on_delete=models.CASCADE, related_name='participaciones')
+    evento = models.ForeignKey(Evento, on_delete=models.CASCADE, related_name='participantes')
+    estado = models.CharField(max_length=20, choices=ESTADOS_PARTICIPACION, default='EN_ESPERA')
+    solicitado_en = models.DateTimeField(auto_now_add=True)
+    aceptado_rechazado_en = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'participacionevento'
+
+    def __str__(self):
+        return f'{self.artista.usuario} en {self.evento.titulo} - Estado: {self.get_estado_display()}'

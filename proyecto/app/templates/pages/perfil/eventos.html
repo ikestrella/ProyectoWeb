@@ -74,7 +74,7 @@
                             <a href="edit{{evento.id}}" class="btn btn-sm btn-primary btn-editar" data-bs-toggle="modal" data-bs-target="#editEventModal{{ evento.id }}">Editar</a>
                             <button class="btn btn-sm btn-danger btn-eliminar" onclick="confirmarEliminar('{{ evento.id }}')">Eliminar</button>
                             {% endif %}
-                            <a href="#" class="btn btn-sm btn-success btn-ver">Ver</a>
+                            <a href="{% url 'gestionarParticipacion' evento.id %}" class="btn btn-sm btn-success btn-ver">Ver</a>
                         </div>
                     </div>
                     {% empty %}

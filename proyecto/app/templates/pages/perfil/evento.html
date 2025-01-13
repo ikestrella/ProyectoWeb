@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/evento.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Detalles del Evento - {{ evento.titulo }}</title>
+</head>
+<body>
+    <header>{% include '../../components/toolbar.html' %}</header>
+
+    <div class="evento-page container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="evento-header">
+                    <img src="{{ evento.imagen.url }}" alt="Foto del Evento" class="evento-imagen">
+                    <div class="artista-info">
+                        <a href="{% url 'perfil' evento.artista.id %}" class="artista-enlace">
+                            <img src="{{ evento.artista.imagen.url }}" alt="Foto del Artista" class="artista-foto">
+                            <h2 class="artista-nombre">{{ evento.artista.usuario }}</h2>
+                        </a>
+                    </div>
+                </div>
+                <div class="evento-detalles">
+                    <h1 class="evento-titulo">{{ evento.titulo }}</h1>
+                    <div class="evento-info">
+                        <p><strong>Descripción:</strong> {{ evento.descripcion }}</p>
+                        <p><strong>Fecha de Inicio:</strong> {{ evento.fecha_inicio|date:"d M Y H:i" }}</p>
+                        <p><strong>Fecha de Fin:</strong> {% if evento.fecha_fin %}{{ evento.fecha_fin|date:"d M Y H:i" }}{% else %}Sin Fecha de Fin{% endif %}</p>
+                        <p><strong>Ubicación:</strong> {{ evento.ubicacion }}</p>
+                    </div>
+
+                    {% if not es_artista %}
+                        {% if not ya_solicitado %}
+                            <form method="post" action="{% url 'gestionarParticipacion' evento.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="accion" value="participar">
+                                <button type="submit" class="btn-participar">Quiero Participar</button>
+                            </form>
+                        {% else %}
+                            <p class="evento-info ya-solicitado">Ya has solicitado participar en este evento.</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="participantes-panel">
+                    <h2 class="participantes-titulo">Participantes</h2>
+                    {% if participaciones %}
+                        <div class="participantes-lista">
+                            {% for participacion in participaciones %}
+                            <div class="participante-card">
+                                <a href="{% url 'perfil' participacion.artista.id %}" class="participante-enlace">
+                                    <img src="{{ participacion.artista.imagen.url }}" alt="Foto de {{ participacion.artista.usuario }}" class="participante-foto">
+                                    <div class="participante-detalles">
+                                        <p class="participante-nombre">{{ participacion.artista.usuario }}</p>
+                                    </div>
+                                </a>
+                                <div class="participante-detalles">
+                                    <p class="participante-estado">Estado: {{ participacion.get_estado_display }}</p>
+                                    {% if es_artista and participacion.estado == 'EN_ESPERA' %}
+                                        <form method="post" action="{% url 'gestionarParticipacion' evento.id %}" class="botones-gestion">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="participante_id" value="{{ participacion.artista.id }}">
+                                            <button type="submit" name="accion" value="aceptar" class="btn-aceptar">Aceptar</button>
+                                            <button type="submit" name="accion" value="rechazar" class="btn-rechazar">Rechazar</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="participante-estado">No hay participantes para este evento.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>{% include '../../components/footer.html' %}</footer>
+</body>
+</html>

@@ -3,10 +3,12 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Q
+from django.db import transaction
 from django.contrib.auth import logout
 from django.contrib import messages
 from django.urls import reverse
-from .models import Artista, Obra, Producto, Evento
+from django.utils import timezone
+from .models import Artista, Obra, Producto, Evento, ParticipacionEvento
 
 def logout_u(request):
     logout(request)
@@ -485,10 +487,10 @@ def presentar_pagina_productos(request):
         productos = Producto.objects.filter(
             Q(nombre__icontains=busqueda) |
             Q(descripcion__icontains=busqueda) |
-            Q(artista__usuario__icontains=busqueda)  # Asumiendo que hay una relación con Artista
+            Q(artista__usuario__icontains=busqueda)
         ).distinct()
 
-    paginator = Paginator(productos, 6)  # 6 productos por página, ajusta según tu necesidad
+    paginator = Paginator(productos, 6)
     page = request.GET.get('page')
 
     try:
@@ -499,3 +501,74 @@ def presentar_pagina_productos(request):
         productos_page = paginator.page(paginator.num_pages)
 
     return render(request, 'pages/productos.html', {'productos': productos_page})
+
+def gestionar_participacion(request, evento_id):
+    usuario = request.session.get('usuario')
+    if not usuario:
+        return redirect('login')
+
+    try:
+        artista = Artista.objects.get(usuario=usuario)
+    except Artista.DoesNotExist:
+        es_artista = False
+        artista = None
+    else:
+        evento = get_object_or_404(Evento, id=evento_id)
+        es_artista = (evento.artista == artista)
+        ya_solicitado = ParticipacionEvento.objects.filter(artista=artista, evento=evento).exists()
+
+    if es_artista:
+        if request.method == 'POST':
+            participante_id = request.POST.get('participante_id')
+            accion = request.POST.get('accion')
+            
+            participante = get_object_or_404(Artista, id=participante_id)
+            
+            try:
+                with transaction.atomic():
+                    participacion, created = ParticipacionEvento.objects.get_or_create(
+                        artista=participante, 
+                        evento=evento, 
+                        defaults={'estado': 'EN_ESPERA'}
+                    )
+                    
+                    if accion == 'aceptar':
+                        participacion.estado = 'PARTICIPANDO'
+                    elif accion == 'rechazar':
+                        participacion.estado = 'RECHAZADO'
+                    
+                    participacion.aceptado_rechazado_en = timezone.now()
+                    participacion.save()
+                    
+                    messages.success(request, f'Participación de {participante.usuario} {accion}da con éxito.')
+            except Exception as e:
+                messages.error(request, f'Error al {accion} la participación: {str(e)}')
+        participaciones = ParticipacionEvento.objects.filter(evento=evento).exclude(estado='RECHAZADO').order_by('-solicitado_en')
+    else:
+        if request.method == 'POST' and request.POST.get('accion') == 'participar':
+            try:
+                with transaction.atomic():
+                    if artista is None:
+                        messages.error(request, 'Debes ser un artista registrado para participar en eventos.')
+                    else:
+                        participacion, created = ParticipacionEvento.objects.get_or_create(
+                            artista=artista,
+                            evento=evento,
+                            defaults={'estado': 'EN_ESPERA'}
+                        )
+                        if not created:
+                            messages.warning(request, 'Ya has solicitado participar en este evento.')
+                        else:
+                            messages.success(request, 'Tu solicitud para participar ha sido enviada.')
+            except Exception as e:
+                messages.error(request, f'Error al solicitar participación: {str(e)}')  
+        participaciones = ParticipacionEvento.objects.filter(evento=evento, estado='PARTICIPANDO')
+
+    context = {
+        'evento': evento,
+        'participaciones': participaciones,
+        'es_artista': es_artista,
+        'artista': artista,
+        'ya_solicitado': ya_solicitado if not es_artista else False
+    }
+    return render(request, 'pages/perfil/evento.html', context)
