@@ -142,7 +142,7 @@
                     <a href="#" class="btn btn-sm btn-primary btn-editar" id="btnEditEvent" data-bs-toggle="modal">Editar</a>
                     <button class="btn btn-sm btn-danger btn-eliminar" id="btnDeleteEvent">Eliminar</button>
                     {% endif %}
-                    <a href="#" class="btn btn-sm btn-success btn-ver">Ver</a>
+                    <a id="btnVerEvent" href="#" class="btn btn-sm btn-success btn-ver">Ver</a>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
@@ -229,6 +229,7 @@
                         
                         var editBtn = document.getElementById('btnEditEvent');
                         var deleteBtn = document.getElementById('btnDeleteEvent');
+                        var verBtn = document.getElementById('btnVerEvent');
                         
                         if ('{{ es_mi_perfil|yesno:"true,false" }}' === 'true') {
                             if (editBtn) editBtn.style.display = 'inline-block';
@@ -240,6 +241,13 @@
                             if (deleteBtn) deleteBtn.style.display = 'none';
                         }
                         
+                        if (verBtn) {
+                            let baseUrl = "{% url 'gestionarParticipacion' 0 %}";
+                            let finalUrl = baseUrl.replace('/0/', '/' + info.event.id + '/');
+                            verBtn.href = finalUrl;
+                        }
+
+
                         var modalElement = document.getElementById('eventDetailsModal');
                         var modal = new bootstrap.Modal(modalElement);
                         modal.show();
