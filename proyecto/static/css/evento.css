@@ -107,6 +107,8 @@ body {
 .evento-info {
     display: grid;
     gap: 1.25rem;
+    color: white;
+    margin-top: 50px;
 }
 
 .evento-info p {
