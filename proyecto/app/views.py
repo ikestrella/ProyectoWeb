@@ -370,12 +370,17 @@ def presentar_eventos(request, artista_id=None):
             artista = Artista.objects.get(usuario=usuario)
         except Artista.DoesNotExist:
             return HttpResponse("El artista no existe.", status=404)
+        
+    eventos_creados = Evento.objects.filter(artista=artista).order_by('-fecha_inicio')
 
-    eventos = Evento.objects.filter(artista=artista).order_by('-fecha_inicio')
+    participaciones = ParticipacionEvento.objects.filter(artista=artista, estado='PARTICIPANDO')
+    eventos_participando = Evento.objects.filter(participantes__in=participaciones).order_by('-fecha_inicio')
+
+    eventos = (eventos_creados | eventos_participando).distinct().order_by('-fecha_inicio')
     
     search_query = request.GET.get('q', '')
     if search_query:
-        eventos = eventos.filter(titulo__icontains=search_query)
+        eventos = eventos.filter(Q(titulo__icontains=search_query) | Q(descripcion__icontains=search_query))
 
     paginator = Paginator(eventos, 3)
     page_number = request.GET.get('page')
@@ -391,7 +396,8 @@ def presentar_eventos(request, artista_id=None):
             'color': colors[index % len(colors)],
             'description': evento.descripcion,
             'location': evento.ubicacion,
-            'id': evento.id
+            'id': evento.id,
+            'es_creador': evento.artista_id == artista.id if hasattr(evento, 'artista_id') else False
         }
         eventos_list.append(evento_data)
     eventos_json = json.dumps(eventos_list)

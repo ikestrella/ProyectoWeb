@@ -70,8 +70,8 @@
                             <h6 class="card-subtitle mb-2 text-muted">{{ evento.fecha_inicio|date:"d M Y H:i" }} - {% if evento.fecha_fin %}{{ evento.fecha_fin|date:"d M Y H:i" }}{% else %}Sin Fecha De Fin{% endif %}</h6>
                             <p class="card-text">{{ evento.descripcion|truncatewords:10 }}</p>
                             <p class="card-text"><small class="text-muted">Ubicación: {{ evento.ubicacion }}</small></p>
-                            {% if es_mi_perfil %}
-                            <a href="edit{{evento.id}}" class="btn btn-sm btn-primary btn-editar" data-bs-toggle="modal" data-bs-target="#editEventModal{{ evento.id }}">Editar</a>
+                            {% if es_mi_perfil and evento.artista_id == artista.id %}
+                            <a href="#editEventModal{{ evento.id }}" class="btn btn-sm btn-primary btn-editar" data-bs-toggle="modal">Editar</a>
                             <button class="btn btn-sm btn-danger btn-eliminar" onclick="confirmarEliminar('{{ evento.id }}')">Eliminar</button>
                             {% endif %}
                             <a href="{% url 'gestionarParticipacion' evento.id %}" class="btn btn-sm btn-success btn-ver">Ver</a>
@@ -81,6 +81,7 @@
                     <div class="alert alert-warning text-center">No se encontraron eventos.</div>
                     {% endfor %}
                 </div>
+
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-center">
                         {% if eventos_page.has_previous %}
@@ -107,6 +108,7 @@
                     </ul>
                 </nav>
             </div>
+            
             <main class="col-md-6 ms-sm-auto col-lg-8 px-md-4">
                 <section id="eventos">
                     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -231,7 +233,7 @@
                         var deleteBtn = document.getElementById('btnDeleteEvent');
                         var verBtn = document.getElementById('btnVerEvent');
                         
-                        if ('{{ es_mi_perfil|yesno:"true,false" }}' === 'true') {
+                        if ('{{ es_mi_perfil|yesno:"true,false" }}' === 'true' && info.event.extendedProps.es_creador) {
                             if (editBtn) editBtn.style.display = 'inline-block';
                             if (deleteBtn) deleteBtn.style.display = 'inline-block';
                             if (editBtn) editBtn.setAttribute('data-bs-target', '#editEventModal' + info.event.id);
@@ -246,7 +248,6 @@
                             let finalUrl = baseUrl.replace('/0/', '/' + info.event.id + '/');
                             verBtn.href = finalUrl;
                         }
-
 
                         var modalElement = document.getElementById('eventDetailsModal');
                         var modal = new bootstrap.Modal(modalElement);
