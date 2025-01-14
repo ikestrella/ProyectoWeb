@@ -8,11 +8,32 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from django.urls import reverse
 from django.utils import timezone
+from .forms import UserRegistrationForm
 from .models import Artista, Obra, Producto, Evento, ParticipacionEvento
 
 def logout_u(request):
     logout(request)
     return redirect('login')
+
+def register(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.contrasenia = form.cleaned_data['contrasenia']
+            user.imagen = form.cleaned_data.get('imagen', '/media/artistas/avatar.png')
+            user.acerca = form.cleaned_data.get('acerca', 'Sin información')
+            user.ncontacto = form.cleaned_data.get('ncontacto', 'Sin número')
+            
+            user.save()
+            
+            request.session['usuario'] = user.usuario
+            return redirect('inicio')
+    else:
+        form = UserRegistrationForm()
+    
+    return render(request, 'pages/register.html', {'form': form})
+
 
 def presentar_perfil(request, artista_id=None):
     usuario = request.session.get('usuario')

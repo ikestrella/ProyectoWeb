@@ -1,50 +1,218 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Iniciar Sesión</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            width: 100%;
+        }
+
+        .left {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f8f9fa;
+            overflow: hidden; /* Asegura que el contenido que exceda el contenedor se corte */
+        }
+
+        .left img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Asegura que la imagen cubra todo el espacio sin distorsionarse */
+            object-position: center; /* Centra la imagen dentro del contenedor */
+            border-radius: 0;
+        }
+
+        .right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background: white;
+            color: black;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .form-container h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            position: static;
+        }
+
+        .form-container p {
+            margin: 10px 0;
+            color: #666;
+        }
+
+        .form-container .social-login {
+            margin-bottom: 20px;
+        }
+
+        .form-container .social-login img {
+            width: 50px;
+            border: none;
+            border-radius: 50%;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .form-container .separator {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #666;
+        }
+
+        .form-container .separator hr {
+            flex: 1;
+            border: none;
+            border-top: 1px solid #ddd;
+        }
+
+        .form-container .separator span {
+            margin: 0 10px;
+            font-weight: bold;
+        }
+
+        .form-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+            color: black;
+        }
+
+        .form-container input::placeholder {
+            color: #aaa;
+            font-style: italic;
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 12px;
+            background-color: #f5d7ba;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        .form-container button:hover {
+            background-color: #f0cba7;
+        }
+
+        .form-container a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .container {
+                flex-direction: column;
+            }
+
+            .left, .right {
+                flex: none;
+                width: 100%;
+            }
+
+            .left img {
+                height: auto;
+                max-height: 300px;
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-light">
-    <header>{% include '../components/toolbar.html' %}</header>
+<body>
+    <header>
+        {% include '../components/toolbar.html' %}
+    </header>
     <div class="container">
-        
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow">
-                    <div class="card-body">
-                        <h1 class="text-center mb-4">Iniciar Sesión</h1>
+        <!-- Columna izquierda: Imagen de fondo -->
+        <div class="left">
+            <img src="/media/art.avif" alt="Imagen de fondo">
+        </div>
+        <!-- Columna derecha: Formulario -->
+        <div class="right">
+            <div class="form-container">
+                <h1>Bienvenido</h1>
+                <p>Por favor inicia sesión</p>
+                <p>¿No tienes una cuenta? <a href="/register">Regístrate gratis</a></p>
 
-                        <form method="post">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <label for="usuario" class="form-label">Usuario</label>
-                                <input type="text" id="usuario" name="usuario" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="contrasenia" class="form-label">Contraseña</label>
-                                <input type="password" id="contrasenia" name="contrasenia" class="form-control"
-                                    required>
-                            </div>
-                            {% if error %}
-                            <div class="alert alert-danger" role="alert">
-                                {{ error }}
-                            </div>
-                            {% endif %}
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">Iniciar sesión</button>
-                            </div>
-                        </form>
-                    </div>
+                <!-- Inicio de sesión con Google -->
+                <div class="social-login">
+                    <img src="/media/google.png" alt="Google">
                 </div>
+
+                <!-- Separador con "O" -->
+                <div class="separator">
+                    <hr>
+                    <span>O</span>
+                    <hr>
+                </div>
+
+                <!-- Formulario de inicio de sesión -->
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="usuario" class="form-label">Usuario</label>
+                        <input type="text" id="usuario" name="usuario" class="form-control" placeholder="Ingrese su usuario" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="contrasenia" class="form-label">Contraseña</label>
+                        <input type="password" id="contrasenia" name="contrasenia" class="form-control" placeholder="Ingrese su contraseña" required>
+                    </div>
+                    {% if error %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                    {% endif %}
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Iniciar sesión</button>
+                    </div>
+                </form>
+
+                <p><a href="#">¿Olvidaste la contraseña?</a></p>
             </div>
         </div>
-        
     </div>
-    <br>
+    <footer>
+        {% include '../components/footer.html' %}
+    </footer>
 </body>
 
 </html>
