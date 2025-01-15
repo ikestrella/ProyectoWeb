@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/obra.css' %}">
+    <title>{{ obra.nombre }}</title>
+</head>
+
+<body>
+    {% include '../components/toolbar.html' %}
+
+    <div class="obra-page">
+        <img src="{{ obra.imagen.url }}" alt="{{ obra.nombre }}" class="obra-image">
+        <div class="obra-info">
+            <h1 class="obra-title">{{ obra.nombre }}</h1>
+            <p class="obra-description">{{ obra.descripcion }}</p>
+            <p class="obra-artist">Por: <a href="{% url 'perfil' obra.artista.id %}">{{ obra.artista.usuario }}</a></p>
+        </div>
+
+        <div class="comments-section">
+            <h2>Comentarios</h2>
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'agregar_comentario' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="obra_id" value="{{ obra.id }}">
+                    <textarea name="contenido" placeholder="Escribe tu comentario..."></textarea>
+                    <button type="submit">Enviar Comentario</button>
+                </form>
+            {% else %}
+                <p>Inicia sesión para dejar un comentario.</p>
+            {% endif %}
+
+            <div class="comments-list">
+                {% for comentario in obra.comentario_set.all %}
+                    <div class="comment">
+                        <p class="comment-content">{{ comentario.contenido }}</p>
+                        <p class="comment-author">Por: {{ comentario.usuario.username }} - {{ comentario.fecha_creacion|date:"d/m/Y H:i" }}</p>
+                    </div>
+                {% empty %}
+                    <p>No hay comentarios aún.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% include '../components/footer.html' %}
+</body>
+
+</html>

@@ -9,7 +9,7 @@ class Artista(models.Model):
     acerca = models.CharField(max_length=400)
     correo = models.EmailField(max_length=100, unique=True)
     ncontacto = models.CharField(max_length=15)
-
+    #planes basico/artista1/artista2
 
     class Meta:
         db_table = 'artista'
@@ -17,6 +17,7 @@ class Artista(models.Model):
     def __str__(self):
         return  self.usuario
 
+#crear clase para los admins para que puedan administrar la pagina(usuario/contrasenia)
 
 
 class Producto(models.Model):
@@ -25,6 +26,8 @@ class Producto(models.Model):
     precio = models.IntegerField() 
     descripcion = models.TextField(max_length=200)
     artista = models.ForeignKey(Artista, db_column='artista', blank=True, null=True, on_delete=models.SET_NULL)
+    #verificacion espera/aceptado/rechazado/fueradestock
+    #stock
 
     class Meta:
         db_table = 'producto'
@@ -40,6 +43,7 @@ class Obra(models.Model):
     descripcion = models.TextField(max_length=255)
     imagen = models.ImageField(upload_to='obras/')
     artista = models.ForeignKey(Artista, db_column='artista', blank=True, null=True, on_delete=models.SET_NULL)
+    #verificacion espera/aceptado/rechazado
 
     class Meta:
         db_table = 'obra'

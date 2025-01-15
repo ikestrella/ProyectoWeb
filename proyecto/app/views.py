@@ -21,18 +21,46 @@ def register(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.contrasenia = form.cleaned_data['contrasenia']
-            user.imagen = form.cleaned_data.get('imagen', '/media/artistas/avatar.png')
+            user.imagen = form.cleaned_data.get('imagen', 'media/artistas/avatar.png')
             user.acerca = form.cleaned_data.get('acerca', 'Sin información')
             user.ncontacto = form.cleaned_data.get('ncontacto', 'Sin número')
             
             user.save()
             
-            request.session['usuario'] = user.usuario
-            return redirect('inicio')
+            request.session['registered_user_id'] = user.id
+            return redirect('select_plan')
     else:
         form = UserRegistrationForm()
     
     return render(request, 'pages/register.html', {'form': form})
+
+def select_plan(request):
+    user_id = request.session.get('registered_user_id')
+    
+    if not user_id:
+        return redirect('register')
+        
+    try:
+        artista = Artista.objects.get(id=user_id)
+    except Artista.DoesNotExist:
+        return redirect('register')
+
+    if request.method == 'POST':
+        plan = request.POST.get('plan')
+        if plan == 'artist':
+           
+            pass
+        elif plan == 'client':
+            
+            artista.delete()
+        
+       
+        if 'registered_user_id' in request.session:
+            del request.session['registered_user_id']
+            
+        return redirect('login')
+        
+    return render(request, 'pages/select_plan.html')
 
 
 def presentar_perfil(request, artista_id=None):
@@ -599,3 +627,11 @@ def gestionar_participacion(request, evento_id):
         'ya_solicitado': ya_solicitado if not es_artista else False
     }
     return render(request, 'pages/perfil/evento.html', context)
+
+
+def presentar_obra(request, obra_id):
+    obra = get_object_or_404(Obra, id=obra_id)
+    context = {
+        'obra': obra,
+    }
+    return render(request, 'pages/obra.html', context)

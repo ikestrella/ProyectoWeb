@@ -11,6 +11,10 @@
   --transition: all 0.3s ease;
 }
 
+body{
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
 /* Sidebar */
 .sidebar {
   top: 0;
@@ -192,4 +196,133 @@ main {
   text-align: center;
   margin-bottom: 2rem;
   color: var(--text-dark);
+}
+.view-obra-btn {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--accent-color);
+  color: var(--text-light);
+  text-decoration: none;
+  border-radius: 0.25rem;
+  transition: var(--transition);
+}
+
+.view-obra-btn:hover {
+  background-color: var(--primary-color);
+  transform: translateY(-2px);
+  color: white;
+}
+
+.modal {
+  z-index: 1070;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  outline: 0;
+}
+
+.modal-backdrop {
+  z-index: 1050;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.modal-dialog {
+  position: relative;
+  width: auto;
+  margin: 0.5rem;
+  pointer-events: none;
+}
+
+.modal.show .modal-dialog {
+  z-index: 1071;
+  display: flex;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background-color: var(--text-light);
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  background-color: var(--primary-color);
+  color: var(--text-light);
+  border-bottom: 1px solid var(--text-dark);
+}
+
+.modal-title {
+  font-size: 1.25rem;
+}
+
+.modal-body {
+  padding: 1rem;
+}
+
+.modal-footer {
+  border-top: 1px solid var(--text-dark);
+  justify-content: space-between;
+}
+
+button {
+  transition: var(--transition);
+}
+
+.btn-secondary {
+  background-color: var(--text-dark);
+  color: var(--text-light);
+  border: none;
+}
+
+.btn-secondary:hover {
+  background-color: #000022; /* Un tono más oscuro del azul oscuro */
+}
+
+.btn-primary {
+  background-color: var(--accent-color);
+  color: var(--text-light);
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #A56B2F; /* Un tono más oscuro del marrón dorado */
+}
+
+.text button {
+  margin: 0.25rem;
+}
+
+.gallery-buttons {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1061;
+  display: flex;
+  gap: 10px;
+}
+
+.gallery-buttons button {
+  opacity: 1;
+  transition: var(--transition);
+}
+
+.modal-dialog {
+  margin-top: 50px;
+  max-width: 500px;
+  margin-right: auto;
+  margin-left: auto;
 }

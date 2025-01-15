@@ -1,14 +1,14 @@
 /* Variables y configuración base */
 :root {
-    --primary-color: #4f46e5;
-    --primary-hover: #4338ca;
-    --danger-color: #ef4444;
-    --success-color: #22c55e;
-    --bg-gray: #f3f4f6;
-    --bg-light: #ffffff;
-    --text-primary: #111827;
-    --text-secondary: #4b5563;
-    --text-light: #6b7280;
+    --primary-color: #DAA520; /* Marrón dorado */
+    --primary-hover: #B8860B; /* Un tono más oscuro del marrón dorado */
+    --danger-color: #B22222; /* Rojo oscuro */
+    --success-color: #2E8B57; /* Verde oscuro */
+    --bg-gray: #FFFFF0; /* Crema claro */
+    --bg-light: #FFFFFF;
+    --text-primary: #000033; /* Azul oscuro */
+    --text-secondary: #666; /* Gris medio */
+    --text-light: #999; /* Gris claro */
     --border-radius: 1rem;
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -75,9 +75,19 @@ body {
     color: var(--text-primary);
 }
 
+.artista-enlace {
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: var(--transition);
+}
+
+.artista-enlace:hover {
+    color: var(--primary-color);
+}
+
 /* Detalles del Evento */
 .evento-detalles {
-    background-color: rgba(18, 40, 62, 1);
+    background-color: var(--bg-light);
     padding: 2.5rem;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-md);
@@ -87,7 +97,7 @@ body {
 .evento-titulo {
     font-size: 2.5rem;
     font-weight: 800;
-    color: white;
+    color: var(--text-primary);
     margin-bottom: 2rem;
     position: relative;
     padding-bottom: 1rem;
@@ -107,14 +117,13 @@ body {
 .evento-info {
     display: grid;
     gap: 1.25rem;
-    color: white;
-    margin-top: 50px;
+    color: var(--text-secondary);
 }
 
 .evento-info p {
     padding: 1.25rem;
-    background-color: rgb(228, 188, 138);
-    color: white;
+    background-color: var(--bg-light);
+    border: 1px solid var(--primary-color);
     border-radius: 0.75rem;
     margin: 0;
     transition: var(--transition);
@@ -122,8 +131,8 @@ body {
 
 .evento-info p:hover {
     transform: translateX(10px);
-    background-color: #e5e7eb;
-    color: black;
+    background-color: var(--bg-light);
+    box-shadow: var(--shadow-sm);
 }
 
 .evento-info strong {
@@ -140,7 +149,7 @@ body {
     margin-top: 2rem;
     font-size: 1.125rem;
     font-weight: 600;
-    color: white;
+    color: var(--bg-light);
     background-color: var(--primary-color);
     border: none;
     border-radius: var(--border-radius);
@@ -179,7 +188,6 @@ body {
     padding: 2rem;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-lg);
-    height: auto;
 }
 
 .participantes-titulo {
@@ -199,14 +207,14 @@ body {
     left: 50%;
     transform: translateX(-50%);
     width: 40px;
-    height: px;
+    height: 4px;
     background-color: var(--primary-color);
     border-radius: 2px;
 }
 
 /* Tarjetas de Participantes */
 .participante-card {
-    background-color: rgba(18, 40, 62, 1);
+    background-color: var(--bg-light);
     padding: 1.5rem;
     border-radius: var(--border-radius);
     margin-bottom: 1.5rem;
@@ -218,9 +226,7 @@ body {
 .participante-card:hover {
     transform: translateY(-5px);
     border-color: var(--primary-color);
-    background-color: rgba(18, 40, 62, 1);
     box-shadow: var(--shadow-md);
-    color: black;
 }
 
 .participante-foto {
@@ -236,13 +242,13 @@ body {
 .participante-nombre {
     font-size: 1.125rem;
     font-weight: 600;
-    color: white;
+    color: var(--text-primary);
     margin: 0.5rem 0;
 }
 
 .participante-estado {
     font-size: 0.875rem;
-    color: white;
+    color: var(--text-secondary);
     margin: 0.5rem 0 1rem;
 }
 
@@ -263,23 +269,35 @@ body {
     cursor: pointer;
     transition: var(--transition);
     min-width: 100px;
+    text-align: center;
 }
 
 .btn-aceptar {
     background-color: var(--success-color);
-    color: white;
+    color: var(--bg-light);
 }
 
 .btn-rechazar {
     background-color: var(--danger-color);
-    color: white;
+    color: var(--bg-light);
 }
 
 .btn-aceptar:hover,
 .btn-rechazar:hover {
     transform: translateY(-2px);
-    filter: brightness(110%);
+    filter: brightness(120%);
     box-shadow: var(--shadow-sm);
+}
+
+/* Mensaje de Solicitud Enviada */
+.ya-solicitado {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-align: center;
+    padding: 1rem;
+    border: 1px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    margin-top: 1rem;
 }
 
 /* Responsive Design */
@@ -356,7 +374,7 @@ body {
 .btn-aceptar:focus,
 .btn-rechazar:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.4);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color), 0.4);
 }
 
 /* Animaciones */

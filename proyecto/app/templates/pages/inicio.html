@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/inicio.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Inicio</title>
 </head>
 
@@ -15,8 +15,7 @@
         {% include '../components/toolbar.html' %}
     </header>
 
-    <section class="hero text-white text-center py-5"
-        style="background: url('/media/fondo.png') no-repeat center center / cover;">
+    <section class="hero text-white text-center py-5">
         <div class="container">
             <h1 class="display-4 fw-bold">Productos de<br>artistas Urbanos</h1>
             <p class="lead">Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem
@@ -47,7 +46,7 @@
         </section>
     </div>
 
-    <section class="mb-5 obras-section" style="background-color: #FFF8E7; padding: 2rem 0;">
+    <section class="mb-5 obras-section">
         <div class="container">
             <h2 class="text-center fw-bold mb-4 section-title">Obras</h2>
             <div class="row g-4">
@@ -63,7 +62,7 @@
                                     <p class="small text-muted">{{ o.artista }}</p>
                                     <h5 class="card-title fw-bold">{{ o.nombre }}</h5>
                                     <p class="card-text">{{ o.descripcion }}</p>
-                                    <a href="#" class="btn view-more-btn">Ver más →</a>
+                                    <a href="{% url 'mostrarObra' o.id %}" class="btn view-more-btn">Ver más →</a>
                                 </div>
                             </div>
                         </div>
@@ -90,7 +89,7 @@
                             style="width: 150px; height: 150px; object-fit: cover;">
                         <div class="card-body">
                             <h5 class="card-title">{{ a.usuario }}</h5>
-                            <a href="{% url 'perfil' a.id %}" class="btn view-more-btn">→</a>
+                            <a href="{% url 'perfil' a.id %}" class="btn view-more-btn">Ver más →</a>
                         </div>
                     </div>
                 </div>
@@ -102,9 +101,7 @@
             </div>
         </section>
     </div>
-
     {% include '../components/footer.html' %}
-
 </body>
 
 </html>

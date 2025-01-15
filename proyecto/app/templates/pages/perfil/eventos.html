@@ -24,41 +24,21 @@
                     </div>
                     <h2 class="profile-name">{{ artista }}</h2>
                     <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'perfil' artista.id %}" style="color: black;">
-                                <i class="bi bi-person"></i> Acerca de mi
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link"
-                                href="{% if not es_mi_perfil %}{% url 'mostrarObras' artista.id %}{% else %}{% url 'mostrarObras' %}{% endif %}"
-                                style="color: black;">
-                                <i class="bi bi-star"></i> Obras
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link"
-                                href="{% if not es_mi_perfil %}{% url 'mostrarProductos' artista.id %}{% else %}{% url 'mostrarProductos' %}{% endif %}"
-                                style="color: black;">
-                                <i class="bi bi-grid-3x3-gap"></i> Productos
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active"
-                                href="{% if not es_mi_perfil %}{% url 'mostrarEventos' artista.id %}{% else %}{% url 'mostrarEventos' %}{% endif %}">
-                                <i class="bi bi-calendar"></i> Eventos
-                            </a>
-                        </li>
+                        <li class="nav-item"><a style="color: black;" class="nav-link" href="{% url 'perfil' artista.id %}"><i class="bi bi-person"></i> Acerca de mí</a></li>
+                        <li class="nav-item"><a style="color: black;" class="nav-link" href="{% if not es_mi_perfil %}{% url 'mostrarObras' artista.id %}{% else %}{% url 'mostrarObras' %}{% endif %}"><i class="bi bi-star"></i> Obras</a></li>
+                        <li class="nav-item"><a style="color: black;" class="nav-link" href="{% if not es_mi_perfil %}{% url 'mostrarProductos' artista.id %}{% else %}{% url 'mostrarProductos' %}{% endif %}"><i class="bi bi-grid-3x3-gap"></i> Productos</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="{% if not es_mi_perfil %}{% url 'mostrarEventos' artista.id %}{% else %}{% url 'mostrarEventos' %}{% endif %}"><i class="bi bi-calendar"></i> Eventos</a></li>
                     </ul>
                 </div>
             </nav>
+
             <div class="col-md-3 col-lg-2 d-md-block event-list-sidebar">
                 <h3 class="event-list-title">Lista de Eventos</h3>
                 
                 <div class="mb-3">
                     <form action="" method="get">
                         <input type="text" name="q" class="form-control" placeholder="Buscar eventos..." value="{{ request.GET.q }}">
-                        <button type="submit" class="btn btn-outline-secondary" style="margin-top: 5px;">Buscar</button>
+                        <button type="submit" class="btn btn-outline-secondary mt-1">Buscar</button>
                     </form>
                 </div>
 
@@ -158,6 +138,10 @@
             <div class="modal-content">
                 <form method="POST" enctype="multipart/form-data" action="{% url 'editarEvento' evento.id %}">
                     {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editEventModalLabel{{ evento.id }}">Editar Evento</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="titulo{{ evento.id }}" class="form-label">Título</label>

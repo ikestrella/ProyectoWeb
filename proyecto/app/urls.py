@@ -3,6 +3,8 @@ from . import views
 
 urlpatterns = [
     path('login/', views.login, name='login'),
+    path('register/', views.register, name='register'),
+    path('select-plan/', views.select_plan, name='select_plan'),
     path('logout/', views.logout_u, name='logout'),
     path('', views.presentar_inicio, name='inicio'),
     path('perfil/', views.presentar_perfil, name='perfil'),
@@ -24,7 +26,7 @@ urlpatterns = [
     path('perfil/eventos/<int:artista_id>/', views.presentar_eventos, name='mostrarEventos'),
     path('artistas/', views.presentar_artistas, name='mostrarArtistas'),
     path('obras/', views.presentar_pagina_obras, name='mostrarPaginaObras'),
+    path('obra/<int:obra_id>/', views.presentar_obra, name='mostrarObra'),
     path('productos/', views.presentar_pagina_productos, name='mostrarPaginaProductos'),
-    path('perfil/evento/gestionar/<int:evento_id>/', views.gestionar_participacion, name='gestionarParticipacion'),
-    path('register/', views.register, name='register')
+    path('perfil/evento/gestionar/<int:evento_id>/', views.gestionar_participacion, name='gestionarParticipacion')
 ]

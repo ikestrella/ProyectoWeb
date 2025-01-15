@@ -195,7 +195,7 @@ main {
 
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: system-ui, -apple-system, sans-serif;
     color: var(--text-dark);
     background-color: #f0f0f0;
 }
@@ -324,3 +324,4 @@ button {
     margin-right: auto;
     margin-left: auto;
 }
+

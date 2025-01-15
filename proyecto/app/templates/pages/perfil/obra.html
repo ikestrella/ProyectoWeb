@@ -72,11 +72,11 @@
                                         <p class="gallery-text">{{ o.descripcion }}</p>
                                         {% if es_mi_perfil %}
                                         <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#editModal{{ o.id }}">editar</button>
+                                            data-bs-target="#editModal{{ o.id }}">Editar</button>
                                         <button class="btn btn-sm btn-danger"
-                                            onclick="confirmarBorrar('{{ o.id }}')">eliminar</button>
+                                            onclick="confirmarBorrar('{{ o.id }}')">Eliminar</button>
                                         {% endif %}
-                                        <button class="btn btn-sm btn-warning">Ver</button>
+                                        <a href="{% url 'mostrarObra' o.id %}" class="view-obra-btn">VER</a>
                                     </div>
                                 </div>
                             </div>
@@ -119,7 +119,7 @@
                                 <p class="small text-muted">Imagen actual: {{ o.imagen.name }}</p>
                             </div>
                             <label for="imagen{{ o.id }}" class="form-label">Imagen</label>
-                            <input type="file" class="form-control" id="imagen{{ o.id }}" name="imagen"accept="image/*" value="{{ o.id }}">
+                            <input type="file" class="form-control" id="imagen{{ o.id }}" name="imagen" accept="image/*">
                             <br>
                             <span class="badge bg-secondary">No Seleccionar Imagen Para Mantener la imagen actual</span>
                         </div>
