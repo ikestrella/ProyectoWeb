@@ -538,7 +538,7 @@ def eliminar_evento(request):
 
 def presentar_artistas(request):
     busqueda = request.GET.get("q")
-    artistas = Artista.objects.all()
+    artistas = Artista.objects.all().exclude(plan='basico')
 
     if busqueda:
         artistas = Artista.objects.filter(

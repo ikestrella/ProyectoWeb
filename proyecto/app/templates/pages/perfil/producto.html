@@ -64,12 +64,21 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2 class="section-title">Productos</h2>
                         {% if es_mi_perfil %}
-                        <div class="add-producto">
-                            <form method="POST" action="{% url 'agregarProducto' %}">
-                                {% csrf_token %}
-                                <button class="btn btn-add">➕ Agregar Producto</button>
-                            </form>
-                        </div>
+                        {% if artista.plan == 'plan2' and productos.count < 1 %}
+                            <div class="add-producto">
+                                <form method="POST" action="{% url 'agregarProducto' %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-add">➕ Agregar Producto</button>
+                                </form>
+                            </div>
+                        {% elif artista.plan == 'plan3' and productos.count < 5 %}
+                            <div class="add-producto">
+                                <form method="POST" action="{% url 'agregarProducto' %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-add">➕ Agregar Producto</button>
+                                </form>
+                            </div>
+                        {% endif %}
                         {% endif %}
                     </div>
                     <div class="gallery">
