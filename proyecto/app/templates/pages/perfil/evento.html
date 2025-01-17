@@ -47,6 +47,44 @@
                     {% endif %}
                     {% endif %}
                 </div>
+
+                <!-- Sección de Comentarios -->
+                <div class="comments-section">
+                    <h2>Comentarios</h2>
+                    {% if request.session.usuario %}
+                        <form method="post" action="{% url 'agregar_comentario' 'evento' evento.id %}">
+                            {% csrf_token %}
+                            <textarea name="contenido" placeholder="Escribe tu comentario..." class="form-control"></textarea>
+                            <button type="submit" class="btn btn-primary mt-2">Enviar Comentario</button>
+                        </form>
+                    {% else %}
+                        <p>Inicia sesión para dejar un comentario.</p>
+                    {% endif %}
+
+                    <div class="comments-list mt-4">
+                        {% for comentario in comentarios %}
+                            <div class="comment card mb-3">
+                                <div class="card-body">
+                                    <p class="comment-content card-text">{{ comentario.contenido }}</p>
+                                    <p class="comment-author card-subtitle mb-2 text-muted">Por: {{ comentario.autor.usuario }} - {{ comentario.fecha_creacion|date:"d/m/Y H:i" }}</p>
+                                    {% if request.session.usuario == comentario.autor.usuario %}
+                                        <form method="post" action="{% url 'editar_comentario' comentario.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <input type="text" name="contenido" value="{{ comentario.contenido }}" class="form-control d-inline w-auto">
+                                            <button type="submit" class="btn btn-secondary btn-sm">Editar</button>
+                                        </form>
+                                        <form method="post" action="{% url 'eliminar_comentario' comentario.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p>No hay comentarios aún.</p>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
             <div class="col-md-4">
                 <div class="participantes-panel">
@@ -54,33 +92,35 @@
                     {% if participaciones %}
                     <div class="participantes-lista">
                         {% for participacion in participaciones %}
-                        <div class="participante-card">
-                            <a href="{% url 'perfil' participacion.artista.id %}" class="participante-enlace">
-                                <img src="{{ participacion.artista.imagen.url }}"
-                                    alt="Foto de {{ participacion.artista.usuario }}" class="participante-foto">
-                                <div class="participante-detalles">
-                                    <p class="participante-nombre">{{ participacion.artista.usuario }}</p>
+                        <div class="participante-card card mb-3">
+                            <div class="card-body">
+                                <a href="{% url 'perfil' participacion.artista.id %}" class="participante-enlace d-flex align-items-center">
+                                    <img src="{{ participacion.artista.imagen.url }}"
+                                    alt="Foto de {{ participacion.artista.usuario }}" class="participante-foto rounded-circle me-2">
+                                    <div class="participante-detalles">
+                                        <p class="participante-nombre mb-0">{{ participacion.artista.usuario }}</p>
+                                    </div>
+                                </a>
+                                <div class="participante-estado">
+                                    <p class="card-text">Estado: {{ participacion.get_estado_display }}</p>
+                                    {% if es_artista and participacion.estado == 'EN_ESPERA' %}
+                                    <form method="post" action="{% url 'gestionarParticipacion' evento.id %}"
+                                        class="botones-gestion">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="participante_id" value="{{ participacion.artista.id }}">
+                                        <button type="submit" name="accion" value="aceptar"
+                                            class="btn btn-success btn-sm">Aceptar</button>
+                                        <button type="submit" name="accion" value="rechazar"
+                                            class="btn btn-danger btn-sm">Rechazar</button>
+                                    </form>
+                                    {% endif %}
                                 </div>
-                            </a>
-                            <div class="participante-detalles">
-                                <p class="participante-estado">Estado: {{ participacion.get_estado_display }}</p>
-                                {% if es_artista and participacion.estado == 'EN_ESPERA' %}
-                                <form method="post" action="{% url 'gestionarParticipacion' evento.id %}"
-                                    class="botones-gestion">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="participante_id" value="{{ participacion.artista.id }}">
-                                    <button type="submit" name="accion" value="aceptar"
-                                        class="btn-aceptar">Aceptar</button>
-                                    <button type="submit" name="accion" value="rechazar"
-                                        class="btn-rechazar">Rechazar</button>
-                                </form>
-                                {% endif %}
                             </div>
                         </div>
                         {% endfor %}
                     </div>
                     {% else %}
-                    <p class="participante-estado">No hay participantes para este evento.</p>
+                    <p class="card-text">No hay participantes para este evento.</p>
                     {% endif %}
                 </div>
             </div>

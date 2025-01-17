@@ -8,6 +8,7 @@ urlpatterns = [
     path('logout/', views.logout_u, name='logout'),
     path('', views.presentar_inicio, name='inicio'),
     path('perfil/', views.presentar_perfil, name='perfil'),
+    path('perfil/configuracion/', views.configuracion, name='configuracion'),
     path('perfil/<int:artista_id>/', views.presentar_perfil, name='perfil'),
     path('perfil/obras/', views.presentar_obras, name='mostrarObras'),
     path('perfil/obras/<int:artista_id>/', views.presentar_obras, name='mostrarObras'),
@@ -28,5 +29,18 @@ urlpatterns = [
     path('obras/', views.presentar_pagina_obras, name='mostrarPaginaObras'),
     path('obra/<int:obra_id>/', views.presentar_obra, name='mostrarObra'),
     path('productos/', views.presentar_pagina_productos, name='mostrarPaginaProductos'),
-    path('perfil/evento/gestionar/<int:evento_id>/', views.gestionar_participacion, name='gestionarParticipacion')
+    path('perfil/evento/gestionar/<int:evento_id>/', views.gestionar_participacion, name='gestionarParticipacion'),
+
+
+    path('carrito/', views.mostrar_carrito, name='mostrar_carrito'),
+    path('carrito/agregar/<int:producto_id>/', views.agregar_al_carrito, name='agregar_al_carrito'),
+    path('carrito/actualizar/<int:item_id>/<str:accion>/', views.actualizar_cantidad_carrito, name='actualizar_cantidad_carrito'),
+    path('checkout/', views.checkout, name='checkout'),
+    path('pago/', views.pago, name='pago'),
+    path('procesar_pago/', views.procesar_pago, name='procesar_pago'),
+    
+    path('comentario/agregar/<str:content_type>/<int:object_id>/', views.agregar_comentario, name='agregar_comentario'),
+    path('comentario/editar/<int:comentario_id>/', views.editar_comentario, name='editar_comentario'),
+    path('comentario/eliminar/<int:comentario_id>/', views.eliminar_comentario, name='eliminar_comentario'),
+    
 ]

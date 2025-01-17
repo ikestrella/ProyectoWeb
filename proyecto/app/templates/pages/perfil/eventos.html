@@ -25,9 +25,24 @@
                     <h2 class="profile-name">{{ artista }}</h2>
                     <ul class="nav flex-column">
                         <li class="nav-item"><a style="color: black;" class="nav-link" href="{% url 'perfil' artista.id %}"><i class="bi bi-person"></i> Acerca de mí</a></li>
+                        {% if artista.plan != 'basico' %}
                         <li class="nav-item"><a style="color: black;" class="nav-link" href="{% if not es_mi_perfil %}{% url 'mostrarObras' artista.id %}{% else %}{% url 'mostrarObras' %}{% endif %}"><i class="bi bi-star"></i> Obras</a></li>
+                        {% if artista.plan != 'plan1' %}
                         <li class="nav-item"><a style="color: black;" class="nav-link" href="{% if not es_mi_perfil %}{% url 'mostrarProductos' artista.id %}{% else %}{% url 'mostrarProductos' %}{% endif %}"><i class="bi bi-grid-3x3-gap"></i> Productos</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="{% if not es_mi_perfil %}{% url 'mostrarEventos' artista.id %}{% else %}{% url 'mostrarEventos' %}{% endif %}"><i class="bi bi-calendar"></i> Eventos</a></li>
+                        {% endif %}
+                        {% endif %}
+                        <li class="nav-item eventos">
+                            <a class="nav-link active" style="background-color: #ffe0b2; color: #fca311;" href="{% if not es_mi_perfil %}{% url 'mostrarEventos' artista.id %}{% else %}{% url 'mostrarEventos' %}{% endif %}">
+                                <i class="bi bi-calendar"></i> Eventos
+                            </a>
+                        </li>
+                        {% if es_mi_perfil %}
+                        <li class="nav-item">
+                            <a style="color: black; background-color: white;" class="nav-link" href="{% url 'configuracion' %}">
+                                <i class="bi bi-gear"></i> Configuración
+                            </a>
+                        </li>
+                        {% endif %}
                     </ul>
                 </div>
             </nav>
@@ -95,7 +110,9 @@
                         <h2 class="section-title">Calendario de Eventos</h2>
                         {% if es_mi_perfil %}
                         <div class="add-evento">
+                            {% if artista.plan != 'basico' %}
                             <a href="{% url 'agregarEvento' %}" class="btn btn-add">➕ Agregar Evento</a>
+                            {% endif %}
                         </div>
                         {% endif %}
                     </div>

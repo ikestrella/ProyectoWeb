@@ -387,3 +387,38 @@ body {
 .participantes-panel {
     animation: fadeIn 0.5s ease-out forwards;
 }
+
+
+.comments-section {
+    width: 100%;
+    max-width: 800px;
+    margin-top: 40px;
+    padding: 30px;
+    background-color: #FAF0E6;
+    border: 1px solid var(--border-color);
+    box-sizing: border-box;
+    border-radius: 8px;
+    transition: background-color var(--transition-speed) ease;
+}
+
+.comments-section:hover {
+    background-color: #F5E5D1;
+}
+
+.comments-section h2 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+    transition: color var(--transition-speed) ease;
+}
+
+.comments-section h2:hover {
+    color: var(--secondary-color);
+}
+
+form {
+    margin-bottom: 20px;
+    width: 100%;
+}

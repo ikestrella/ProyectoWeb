@@ -1,0 +1,46 @@
+<!-- app/templates/pages/pago.html -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/checkout.css' %}">
+</head>
+<body>
+    <header>{% include 'components/toolbar.html' %}</header>
+
+    <div class="container">
+        <h1>Pago</h1>
+
+        <h2>Información de Pago</h2>
+        <form method="POST" action="{% url 'procesar_pago' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre en la Tarjeta</label>
+                <select class="form-control" id="nombre" name="nombre" required>
+                    <option value="">Seleccione un nombre</option>
+                    <option value="Nombre 1">Nombre 1</option>
+                    <option value="Nombre 2">Nombre 2</option>
+                    <option value="Nombre 3">Nombre 3</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="numero_tarjeta" class="form-label">Número de Tarjeta</label>
+                <input type="text" class="form-control" id="numero_tarjeta" name="numero_tarjeta" maxlength="16" pattern="\d{16}" required>
+            </div>
+            <div class="mb-3">
+                <label for="fecha_expiracion" class="form-label">Fecha de Expiración</label>
+                <input type="text" class="form-control" id="fecha_expiracion" name="fecha_expiracion" placeholder="MM/AA" pattern="\d{2}/\d{2}" required>
+            </div>
+            <div class="mb-3">
+                <label for="cvv" class="form-label">CVV</label>
+                <input type="text" class="form-control" id="cvv" name="cvv" maxlength="3" pattern="\d{3}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Realizar Pago</button>
+        </form>
+    </div>
+</body>
+</html>

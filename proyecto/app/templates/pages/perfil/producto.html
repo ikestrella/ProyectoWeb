@@ -28,22 +28,33 @@
                                 <i class="bi bi-person"></i> Acerca de mi
                             </a>
                         </li>
+                        {% if artista.plan != 'basico' %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% if not es_mi_perfil %}{% url 'mostrarObras' artista.id %}{% else %}{% url 'mostrarObras' %}{% endif %}" style="color: black;">
                                 <i class="bi bi-star"></i> Obras
                             </a>
                         </li>
+                        {% if artista.plan != 'plan1' %}
                         <li class="nav-item">
                             <a class="nav-link active" href="{% if not es_mi_perfil %}{% url 'mostrarProductos' artista.id %}{% else %}{% url 'mostrarProductos' %}{% endif %}">
                                 <i class="bi bi-grid-3x3-gap"></i> Productos
                             </a>
                         </li>
+                        {% endif %}
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link"
                                 href="{% if not es_mi_perfil %}{% url 'mostrarEventos' artista.id %}{% else %}{% url 'mostrarEventos' %}{% endif %}" style="color: black;">
                                 <i class="bi bi-calendar"></i> Eventos
                             </a>
                         </li>
+                        {% if es_mi_perfil %}
+                        <li class="nav-item">
+                            <a class="nav-link{% if 'configuracion' in request.path %} active{% endif %}" href="{% url 'configuracion' %}" style="color: black;">
+                                <i class="bi bi-gear"></i> Configuración
+                            </a>
+                        </li>
+                        {% endif %}
                     </ul>
                 </div>
             </nav>

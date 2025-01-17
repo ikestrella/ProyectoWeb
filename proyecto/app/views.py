@@ -1,6 +1,6 @@
 import json
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Q
 from django.db import transaction
@@ -9,7 +9,9 @@ from django.contrib import messages
 from django.urls import reverse
 from django.utils import timezone
 from .forms import UserRegistrationForm
-from .models import Artista, Obra, Producto, Evento, ParticipacionEvento
+from .models import Artista, Obra, Producto, Evento, ParticipacionEvento, Carrito, CarritoItem, Comentario
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.contenttypes.models import ContentType
 
 def logout_u(request):
     logout(request)
@@ -26,42 +28,86 @@ def register(request):
             user.ncontacto = form.cleaned_data.get('ncontacto', 'Sin número')
             
             user.save()
-            
-            request.session['registered_user_id'] = user.id
-            return redirect('select_plan')
+
+            return redirect('login')
     else:
         form = UserRegistrationForm()
     
     return render(request, 'pages/register.html', {'form': form})
 
 def select_plan(request):
-    user_id = request.session.get('registered_user_id')
-    
-    if not user_id:
+    usuario = request.session.get('usuario')
+    if not usuario:
         return redirect('register')
-        
+    
     try:
-        artista = Artista.objects.get(id=user_id)
+        artista = Artista.objects.get(usuario=usuario)
     except Artista.DoesNotExist:
         return redirect('register')
 
     if request.method == 'POST':
         plan = request.POST.get('plan')
-        if plan == 'artist':
-           
-            pass
-        elif plan == 'client':
-            
-            artista.delete()
-        
-       
-        if 'registered_user_id' in request.session:
-            del request.session['registered_user_id']
-            
-        return redirect('login')
-        
-    return render(request, 'pages/select_plan.html')
+        if plan in ['plan1', 'plan2', 'plan3']:
+            # Cambiar al plan seleccionado
+            artista.plan = plan
+            artista.save()
+            messages.success(request, f'Has actualizado tu plan a {plan}.')
+        return redirect('configuracion')
+    
+    # Preparamos el contexto para mostrar los planes
+    planes_disponibles = [
+        {'nombre': 'Plan 1', 'valor': 'plan1'},
+        {'nombre': 'Plan 2', 'valor': 'plan2'},
+        {'nombre': 'Plan 3', 'valor': 'plan3'}
+    ]
+    
+    context = {
+        'artista': artista,
+        'planes_disponibles': planes_disponibles,
+        'plan_actual': artista.plan
+    }
+    
+    return render(request, 'pages/select_plan.html', context)
 
+def configuracion(request):
+    usuario = request.session.get('usuario')
+    if not usuario:
+        return redirect('login')
+
+    try:
+        artista = Artista.objects.get(usuario=usuario)
+    except Artista.DoesNotExist:
+        return HttpResponse("El artista no existe.", status=404)
+
+    if request.method == 'POST':
+        if 'editar_perfil' in request.POST:
+            # Handle profile edit logic here
+            artista.acerca = request.POST.get('acerca', artista.acerca)
+            artista.correo = request.POST.get('correo', artista.correo)
+            artista.ncontacto = request.POST.get('ncontacto', artista.ncontacto)
+            artista.save()
+            messages.success(request, "Perfil actualizado con éxito.")
+            # Redirigir al perfil después de guardar los cambios
+            return redirect('perfil')
+        
+        elif 'cancelar_plan' in request.POST and artista.plan != 'basico':
+            # Cancel current plan and revert to basic
+            artista.plan = 'basico'
+            # Delete related obras
+            Obra.objects.filter(artista=artista).delete()
+            Producto.objects.filter(artista=artista).delete()
+            artista.save()
+            messages.success(request, "Plan cancelado y obras eliminadas. Ahora tienes el plan básico.")
+        
+        elif 'upgradear_plan' in request.POST:
+            return redirect('select_plan')
+
+    context = {
+        'artista': artista,
+        'planes': Artista.PLAN_CHOICES,
+        'es_mi_perfil': True
+    }
+    return render(request, 'pages/perfil/configuracion.html', context)
 
 def presentar_perfil(request, artista_id=None):
     usuario = request.session.get('usuario')
@@ -85,7 +131,8 @@ def presentar_perfil(request, artista_id=None):
         'obras': obras,
         'productos': productos,
         'artista': artista,
-        'es_mi_perfil': artista_logueado == artista if artista_logueado else False
+        'es_mi_perfil': artista_logueado == artista if artista_logueado else False,
+        'planes': Artista.PLAN_CHOICES  # Add this to pass the plan choices to the template
     }
     return render(request, 'pages/perfil/artista.html', context)
 
@@ -109,7 +156,7 @@ def login(request):
         return render(request, 'pages/login.html')
 
 def presentar_inicio(request):
-    artistas = Artista.objects.all()
+    artistas = Artista.objects.all().exclude(plan='basico')
     productos = Producto.objects.all()
     obras = Obra.objects.all()
 
@@ -451,6 +498,8 @@ def presentar_eventos(request, artista_id=None):
         eventos_list.append(evento_data)
     eventos_json = json.dumps(eventos_list)
 
+    
+
     context = {
         'eventos_all': eventos,
         'eventos_json': eventos_json,
@@ -557,6 +606,8 @@ def presentar_pagina_productos(request):
 
     return render(request, 'pages/productos.html', {'productos': productos_page})
 
+from django.contrib.contenttypes.models import ContentType
+
 def gestionar_participacion(request, evento_id):
     usuario = request.session.get('usuario')
     if not usuario:
@@ -571,6 +622,8 @@ def gestionar_participacion(request, evento_id):
         evento = get_object_or_404(Evento, id=evento_id)
         es_artista = (evento.artista == artista)
         ya_solicitado = ParticipacionEvento.objects.filter(artista=artista, evento=evento).exists()
+
+    comentarios = Comentario.objects.filter(content_type=ContentType.objects.get_for_model(Evento), object_id=evento_id)
 
     if es_artista:
         if request.method == 'POST':
@@ -624,14 +677,237 @@ def gestionar_participacion(request, evento_id):
         'participaciones': participaciones,
         'es_artista': es_artista,
         'artista': artista,
-        'ya_solicitado': ya_solicitado if not es_artista else False
+        'ya_solicitado': ya_solicitado if not es_artista else False,
+        'comentarios': comentarios,  # Añadimos los comentarios al contexto
     }
     return render(request, 'pages/perfil/evento.html', context)
 
 
 def presentar_obra(request, obra_id):
     obra = get_object_or_404(Obra, id=obra_id)
+    # Obtiene todos los comentarios asociados a esta obra
+    comentarios = Comentario.objects.filter(content_type=ContentType.objects.get_for_model(Obra), object_id=obra_id)
+    
     context = {
         'obra': obra,
+        'comentarios': comentarios,  # Añadimos los comentarios al contexto
     }
     return render(request, 'pages/obra.html', context)
+
+def agregar_comentario(request, content_type, object_id):
+    if request.method == 'POST':
+        usuario = request.session.get('usuario')
+        try:
+            autor = Artista.objects.get(usuario=usuario)
+        except Artista.DoesNotExist:
+            messages.error(request, "Debes iniciar sesión para comentar.")
+            return redirect('login')
+
+        contenido = request.POST.get('contenido')
+        if contenido:
+            modelo = get_object_or_404(ContentType, model=content_type)
+            objeto = get_object_or_404(modelo.model_class(), pk=object_id)
+            
+            comentario = Comentario.objects.create(
+                autor=autor,
+                contenido=contenido,
+                content_type=modelo,
+                object_id=object_id
+            )
+            messages.success(request, "Comentario añadido con éxito.")
+            return redirect(objeto.get_absolute_url())
+    return redirect('login')
+
+def editar_comentario(request, comentario_id):
+    if request.method == 'POST':
+        comentario = get_object_or_404(Comentario, id=comentario_id)
+        usuario = request.session.get('usuario')
+        if usuario != comentario.autor.usuario:
+            messages.error(request, "No puedes editar este comentario.")
+            return redirect(comentario.content_object.get_absolute_url())
+        
+        contenido = request.POST.get('contenido')
+        if contenido:
+            comentario.contenido = contenido
+            comentario.save()
+            messages.success(request, "Comentario editado con éxito.")
+            return redirect(comentario.content_object.get_absolute_url())
+    return redirect('login')
+
+def eliminar_comentario(request, comentario_id):
+    if request.method == 'POST':
+        comentario = get_object_or_404(Comentario, id=comentario_id)
+        usuario = request.session.get('usuario')
+        if usuario != comentario.autor.usuario:
+            messages.error(request, "No puedes eliminar este comentario.")
+            return redirect(comentario.content_object.get_absolute_url())
+        
+        objeto = comentario.content_object
+        comentario.delete()
+        messages.success(request, "Comentario eliminado con éxito.")
+        return redirect(objeto.get_absolute_url())
+    return redirect('login')
+
+@csrf_exempt
+def agregar_al_carrito(request, producto_id):
+    usuario = request.session.get('usuario')
+    if not usuario:
+        return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
+
+    producto = get_object_or_404(Producto, id=producto_id)
+    try:
+        artista = Artista.objects.get(usuario=usuario)
+    except Artista.DoesNotExist:
+        return JsonResponse({'error': 'El artista no existe'}, status=404)
+
+    if producto.stock < 1:
+        return JsonResponse({'error': 'Producto sin stock'}, status=400)
+
+    carrito, created = Carrito.objects.get_or_create(usuario=artista)
+
+    cantidad = 1  # Cantidad predeterminada
+
+    carrito_item, created = CarritoItem.objects.get_or_create(carrito=carrito, producto=producto)
+    if not created:
+        if carrito_item.cantidad + cantidad > producto.stock:
+            return JsonResponse({'error': 'Cantidad solicitada supera el stock disponible'}, status=400)
+        carrito_item.cantidad += cantidad
+    else:
+        carrito_item.cantidad = cantidad
+    carrito_item.save()
+
+    # Actualizar el stock del producto
+    producto.stock -= cantidad
+    producto.save()
+
+    # Calcular el número total de productos en el carrito
+    total_items = sum(item.cantidad for item in carrito.items.all())
+    request.session['cart_count'] = total_items
+
+    return JsonResponse({'success': 'Producto agregado al carrito', 'nuevo_stock': producto.stock, 'total_items': total_items})
+
+def mostrar_carrito(request):
+    usuario = request.session.get('usuario')
+    if not usuario:
+        return redirect('login')
+
+    try:
+        artista = Artista.objects.get(usuario=usuario)
+    except Artista.DoesNotExist:
+        return HttpResponse("El artista no existe.", status=404)
+
+    carrito, created = Carrito.objects.get_or_create(usuario=artista)
+    
+    items = carrito.items.all()
+    total = carrito.calcular_total()
+
+    # Obtener el número total de productos desde la sesión
+    total_items = request.session.get('cart_count', 0)
+
+    return render(request, 'pages/carrito.html', {'carrito': carrito, 'items': items, 'total': total, 'total_items': total_items})
+
+def checkout(request):
+    usuario = request.session.get('usuario')
+    if not usuario:
+        return redirect('login')
+
+    try:
+        artista = Artista.objects.get(usuario=usuario)
+    except Artista.DoesNotExist:
+        return HttpResponse("El artista no existe.", status=404)
+
+    carrito = Carrito.objects.get(usuario=artista)
+    items = list(carrito.items.all())  # Convertir a lista para mantener los items después de limpiar el carrito
+
+    if not items:
+        messages.add_message(request, messages.WARNING, 'No puedes proceder al pago sin productos en el carrito.')
+        return redirect('mostrar_carrito')
+
+    total = carrito.calcular_total()
+
+    return render(request, 'pages/checkout.html', {'items': items, 'total': total, 'factura': False})
+
+@csrf_exempt
+def actualizar_cantidad_carrito(request, item_id, accion):
+    usuario = request.session.get('usuario')
+    if not usuario:
+        return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
+
+    try:
+        artista = Artista.objects.get(usuario=usuario)
+    except Artista.DoesNotExist:
+        return JsonResponse({'error': 'El artista no existe'}, status=404)
+
+    carrito_item = get_object_or_404(CarritoItem, id=item_id, carrito__usuario=artista)
+
+    if accion == 'incrementar':
+        if carrito_item.producto.stock > 0:
+            carrito_item.cantidad += 1
+            carrito_item.producto.stock -= 1
+            carrito_item.producto.save()
+            carrito_item.save()
+        else:
+            return JsonResponse({'error': 'Producto sin stock'}, status=400)
+    elif accion == 'disminuir':
+        if carrito_item.cantidad > 1:
+            carrito_item.cantidad -= 1
+            carrito_item.producto.stock += 1
+            carrito_item.producto.save()
+            carrito_item.save()
+        else:
+            carrito_item.producto.stock += carrito_item.cantidad
+            carrito_item.producto.save()
+            carrito_item.delete()
+
+    total_items = sum(item.cantidad for item in carrito_item.carrito.items.all())
+    total = carrito_item.carrito.calcular_total()
+
+    return JsonResponse({'success': 'Cantidad actualizada', 'nuevo_stock': carrito_item.producto.stock, 'total_items': total_items, 'total': total, 'cantidad': carrito_item.cantidad, 'producto_id': carrito_item.producto.id})
+
+def procesar_pago(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        numero_tarjeta = request.POST.get('numero_tarjeta')
+        fecha_expiracion = request.POST.get('fecha_expiracion')
+        cvv = request.POST.get('cvv')
+
+        # Aquí puedes agregar la lógica para procesar el pago con una pasarela de pago
+        # Simulamos que el pago se ha realizado con éxito
+        pago_realizado = True
+
+        if pago_realizado:
+            usuario = request.session.get('usuario')
+            try:
+                artista = Artista.objects.get(usuario=usuario)
+            except Artista.DoesNotExist:
+                return HttpResponse("El artista no existe.", status=404)
+
+            carrito = Carrito.objects.get(usuario=artista)
+            items = list(carrito.items.all())  # Convertir a lista para mantener los items después de limpiar el carrito
+            total = carrito.calcular_total()
+            
+            # Borrar los productos del carrito después de que el pago se haya realizado con éxito
+            carrito.items.all().delete()
+            messages.add_message(request, messages.SUCCESS, 'Pago realizado con éxito y carrito limpiado.')
+            return render(request, 'pages/checkout.html', {'items': items, 'total': total, 'factura': True})
+        else:
+            messages.add_message(request, messages.ERROR, 'Error al procesar el pago. Inténtalo de nuevo.')
+
+    return redirect('checkout')
+
+
+def pago(request):
+    usuario = request.session.get('usuario')
+    if not usuario:
+        return redirect('login')
+
+    try:
+        artista = Artista.objects.get(usuario=usuario)
+    except Artista.DoesNotExist:
+        return HttpResponse("El artista no existe.", status=404)
+
+    carrito = Carrito.objects.get(usuario=artista)
+    items = carrito.items.all()
+    total = carrito.calcular_total()
+
+    return render(request, 'pages/pago.html', {'items': items, 'total': total})

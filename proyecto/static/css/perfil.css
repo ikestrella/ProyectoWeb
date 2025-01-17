@@ -87,14 +87,14 @@ body {
   margin-right: 0.5rem;
 }
 
-
-.nav-item:nth-child(1) .nav-link {
+/* Añadir estilos para la clase highlight */
+.nav-item.highlight .nav-link {
   background-color: #fff3e0;
   color: var(--accent-color);
 }
 
-.nav-item:nth-child(1) .nav-link:hover,
-.nav-item:nth-child(1) .nav-link.active {
+.nav-item.highlight .nav-link:hover,
+.nav-item.highlight .nav-link.active {
   background-color: #ffe0b2;
   color: var(--accent-color);
 }

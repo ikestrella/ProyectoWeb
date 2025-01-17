@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/carrito.css' %}">
+</head>
+<body>
+    <header>{% include 'components/toolbar.html' %}</header>
+
+    <div class="container">
+        <h1>Carrito de Compras</h1>
+        <ul class="cart-list">
+            {% for item in items %}
+            <li class="cart-item" data-item-id="{{ item.id }}">
+                <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}">
+                <div class="cart-item-details">
+                    <div class="cart-item-name">{{ item.producto.nombre }}</div>
+                    <div class="cart-item-price" data-price="{{ item.producto.precio }}">{{ item.producto.precio }}$</div>
+                    <div class="cart-item-quantity">
+                        <button class="btn-quantity" data-action="disminuir">-</button>
+                        <span class="quantity">{{ item.cantidad }}</span>
+                        <button class="btn-quantity" data-action="incrementar">+</button>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="cart-total">Total: <span id="total">{{ total }}$</span></div>
+        <a href="{% url 'checkout' %}" class="btn-checkout {% if not items %}disabled{% endif %}" id="checkout-button">Proceder al Pago</a>
+    </div>
+
+    <div id="floating-message" class="floating-message">Debe seleccionar al menos un producto para proceder al pago.</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.btn-quantity');
+            const checkoutButton = document.getElementById('checkout-button');
+            const floatingMessage = document.getElementById('floating-message');
+
+            checkoutButton.addEventListener('click', function(event) {
+                if (checkoutButton.classList.contains('disabled')) {
+                    event.preventDefault();
+                    floatingMessage.classList.add('show');
+                    setTimeout(() => {
+                        floatingMessage.classList.remove('show');
+                    }, 3000);
+                }
+            });
+
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const itemId = this.closest('.cart-item').getAttribute('data-item-id');
+                    const action = this.getAttribute('data-action');
+                    fetch(`/carrito/actualizar/${itemId}/${action}/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const cartItem = document.querySelector(`.cart-item[data-item-id="${itemId}"]`);
+                            cartItem.querySelector('.quantity').textContent = data.cantidad;
+                            cartItem.querySelector('.cart-item-price').textContent = `${data.cantidad * cartItem.querySelector('.cart-item-price').dataset.price}$`;
+                            document.getElementById('total').textContent = `${data.total}$`;
+                            const cartCountElement = document.getElementById('cart-count');
+                            cartCountElement.textContent = data.total_items;
+                            if (data.nuevo_stock < 1) {
+                                const incrementButton = cartItem.querySelector('.btn-quantity[data-action="incrementar"]');
+                                incrementButton.disabled = true;
+                            } else {
+                                const incrementButton = cartItem.querySelector('.btn-quantity[data-action="incrementar"]');
+                                incrementButton.disabled = false;
+                            }
+                            // Actualizar el stock en la página de inicio
+                            const stockElement = document.getElementById(`stock-${data.producto_id}`);
+                            if (stockElement) {
+                                stockElement.textContent = `Stock: ${data.nuevo_stock}`;
+                                if (data.nuevo_stock < 1) {
+                                    const addButton = document.querySelector(`.add-to-cart-form[data-product-id="${data.producto_id}"] button`);
+                                    if (addButton) {
+                                        addButton.disabled = true;
+                                    }
+                                }
+                            }
+                        } else {
+                            alert(data.error || 'Error al actualizar la cantidad');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

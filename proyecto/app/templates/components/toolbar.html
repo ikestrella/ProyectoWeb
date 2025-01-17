@@ -23,6 +23,12 @@
             {% else %}
                 <a href="{% url 'login' %}" class="register-btn" style="color: white;">Login</a>
             {% endif %}
+            <a href="{% url 'mostrar_carrito' %}" class="cart-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+                    <path d="M0 1.5A.5.5 0 0 1 .5 1h1a.5.5 0 0 1 .485.379L2.89 5H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 14H4a.5.5 0 0 1-.491-.408L1.01 1.607 1.61 1H.5a.5.5 0 0 1-.5-.5zM3.14 6l1.25 6h8.22l1.25-6H3.14zM5 12a2 2 0 1 0 4 0 2 2 0 0 0-4 0zm6 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0z"/>
+                </svg>
+                <span id="cart-count" class="cart-count">{{ request.session.cart_count|default:0 }}</span>
+            </a>
         </div>
 
         <button class="mobile-menu">

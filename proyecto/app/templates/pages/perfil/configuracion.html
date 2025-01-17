@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/configuracion.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    <title>Configuración</title>
+</head>
+
+<body>
+    <header>{% include '../../components/toolbar.html' %}</header>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+                <div class="sidebar-sticky">
+                    <div class="profile-pic">
+                        <img src="{{ artista.imagen.url }}" alt="Profile Picture" class="rounded-circle">
+                    </div>
+                    <h2 class="profile-name">{{ artista }}</h2>
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a style="color: black;" class="nav-link" href="{% url 'perfil' artista.id %}"><i class="bi bi-person"></i> Acerca de mí</a></li>
+                        {% if artista.plan != 'basico' %}
+                        <li class="nav-item"><a style="color: black;" class="nav-link" href="{% if not es_mi_perfil %}{% url 'mostrarObras' artista.id %}{% else %}{% url 'mostrarObras' %}{% endif %}"><i class="bi bi-star"></i> Obras</a></li>
+                        {% if artista.plan != 'plan1' %}
+                        <li class="nav-item"><a style="color: black;" class="nav-link" href="{% if not es_mi_perfil %}{% url 'mostrarProductos' artista.id %}{% else %}{% url 'mostrarProductos' %}{% endif %}"><i class="bi bi-grid-3x3-gap"></i> Productos</a></li>
+                        {% endif %}
+                        {% endif %}
+                        <li class="nav-item"><a style="color: black;" class="nav-link" href="{% if not es_mi_perfil %}{% url 'mostrarEventos' artista.id %}{% else %}{% url 'mostrarEventos' %}{% endif %}"><i class="bi bi-calendar"></i> Eventos</a></li>
+                        {% if es_mi_perfil %}
+                        <li class="nav-item highlight">
+                            <a class="nav-link active" href="{% url 'configuracion' %}">
+                                <i class="bi bi-gear"></i> Configuración
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="alert alert-success text-center">
+                    <h1>Configuración de Perfil</h1>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="acerca" class="form-label">Acerca de mí</label>
+                        <textarea class="form-control" id="acerca" name="acerca" rows="3">{{ artista.acerca }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="correo" class="form-label">Correo</label>
+                        <input type="email" class="form-control" id="correo" name="correo" value="{{ artista.correo }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="ncontacto" class="form-label">Número de Contacto</label>
+                        <input type="text" class="form-control" id="ncontacto" name="ncontacto" value="{{ artista.ncontacto }}">
+                    </div>
+                    <h3>Plan Actual: <span class="badge bg-primary">{{ artista.get_plan_display }}</span></h3>
+                    {% if artista.plan != 'basico' %}
+                    <button type="submit" name="cancelar_plan" class="btn btn-danger">Cancelar Plan</button>
+                    {% endif %}
+                    <button type="submit" name="upgradear_plan" class="btn btn-warning">Upgradear Plan</button>
+                    <button type="submit" name="editar_perfil" class="btn btn-success">Guardar Cambios</button>
+                </form>
+            </main>
+        </div>
+    </div>
+    <footer>{% include '../../components/footer.html' %}</footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

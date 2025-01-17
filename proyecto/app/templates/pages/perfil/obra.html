@@ -23,27 +23,21 @@
                     </div>
                     <h2 class="profile-name">{{ artista }}</h2>
                     <ul class="nav flex-column">
+                        <li class="nav-item"><a style="color: black;" class="nav-link" href="{% url 'perfil' artista.id %}"><i class="bi bi-person"></i> Acerca de mí</a></li>
+                        {% if artista.plan != 'basico' %}
+                        <li class="nav-item highlight"><a class="nav-link active" href="{% if not es_mi_perfil %}{% url 'mostrarObras' artista.id %}{% else %}{% url 'mostrarObras' %}{% endif %}"><i class="bi bi-star"></i> Obras</a></li>
+                        {% if artista.plan != 'plan1' %}
+                        <li class="nav-item"><a style="color: black;" class="nav-link" href="{% if not es_mi_perfil %}{% url 'mostrarProductos' artista.id %}{% else %}{% url 'mostrarProductos' %}{% endif %}"><i class="bi bi-grid-3x3-gap"></i> Productos</a></li>
+                        {% endif %}
+                        {% endif %}
+                        <li class="nav-item"><a style="color: black;" class="nav-link" href="{% if not es_mi_perfil %}{% url 'mostrarEventos' artista.id %}{% else %}{% url 'mostrarEventos' %}{% endif %}"><i class="bi bi-calendar"></i> Eventos</a></li>
+                        {% if es_mi_perfil %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'perfil' artista.id %}" style="color: black;">
-                                <i class="bi bi-person"></i> Acerca de mi
+                            <a style="color: black;" class="nav-link{% if 'configuracion' in request.path %} active{% endif %}" href="{% url 'configuracion' %}">
+                                <i class="bi bi-gear"></i> Configuración
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="{% if not es_mi_perfil %}{% url 'mostrarObras' artista.id %}{% else %}{% url 'mostrarObras' %}{% endif %}">
-                                <i class="bi bi-star"></i> Obras
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% if not es_mi_perfil %}{% url 'mostrarProductos' artista.id %}{% else %}{% url 'mostrarProductos' %}{% endif %}" style="color: black;">
-                                <i class="bi bi-grid-3x3-gap"></i> Productos
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link"
-                                href="{% if not es_mi_perfil %}{% url 'mostrarEventos' artista.id %}{% else %}{% url 'mostrarEventos' %}{% endif %}" style="color: black;">
-                                <i class="bi bi-calendar"></i> Eventos
-                            </a>
-                        </li>
+                        {% endif %}
                     </ul>
                 </div>
             </nav>

@@ -22,10 +22,9 @@
 
         <div class="comments-section">
             <h2>Comentarios</h2>
-            {% if user.is_authenticated %}
-                <form method="post" action="{% url 'agregar_comentario' %}">
+            {% if request.session.usuario %}
+                <form method="post" action="{% url 'agregar_comentario' 'obra' obra.id %}">
                     {% csrf_token %}
-                    <input type="hidden" name="obra_id" value="{{ obra.id }}">
                     <textarea name="contenido" placeholder="Escribe tu comentario..."></textarea>
                     <button type="submit">Enviar Comentario</button>
                 </form>
@@ -34,10 +33,21 @@
             {% endif %}
 
             <div class="comments-list">
-                {% for comentario in obra.comentario_set.all %}
+                {% for comentario in comentarios %}
                     <div class="comment">
                         <p class="comment-content">{{ comentario.contenido }}</p>
-                        <p class="comment-author">Por: {{ comentario.usuario.username }} - {{ comentario.fecha_creacion|date:"d/m/Y H:i" }}</p>
+                        <p class="comment-author">Por: {{ comentario.autor.usuario }} - {{ comentario.fecha_creacion|date:"d/m/Y H:i" }}</p>
+                        {% if request.session.usuario == comentario.autor.usuario %}
+                            <form method="post" action="{% url 'editar_comentario' comentario.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="text" name="contenido" value="{{ comentario.contenido }}">
+                                <button type="submit">Editar</button>
+                            </form>
+                            <form method="post" action="{% url 'eliminar_comentario' comentario.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit">Eliminar</button>
+                            </form>
+                        {% endif %}
                     </div>
                 {% empty %}
                     <p>No hay comentarios aún.</p>

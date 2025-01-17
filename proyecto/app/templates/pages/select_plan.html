@@ -32,11 +32,15 @@
             justify-content: center;
             margin-bottom: 20px;
         }
-        .client-icon {
-            background-color: #e3f2fd;
-        }
         .artist-icon {
             background-color: #e8f5e9;
+        }
+        .selected-plan {
+            border: 3px solid #007bff;
+        }
+        .info-plan {
+            background-color: #e3f2fd;
+            color: #455a64;
         }
     </style>
 </head>
@@ -44,48 +48,43 @@
     <div class="container py-5">
         <h2 class="text-center mb-5">Selecciona tu Plan</h2>
         <div class="row justify-content-center gap-4">
-            <div class="col-md-5">
-                <div class="card shadow-sm h-100">
+            <!-- Mostrar el plan actual como información -->
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100 info-plan">
                     <div class="card-body text-center p-5">
-                        <div class="icon-container client-icon">
-                            <i class="fas fa-user fa-3x text-primary"></i>
+                        <div class="icon-container artist-icon">
+                            <i class="fas fa-info-circle fa-3x text-primary"></i>
                         </div>
-                        <h3 class="card-title mb-3">Cliente</h3>
+                        <h3 class="card-title mb-3">Plan Actual</h3>
                         <p class="card-text mb-4">
-                            Accede a todo el contenido y conecta con artistas.
-                            Disfruta de una experiencia personalizada.
+                            Tu plan actual es: <strong>{{ plan_actual|title }}</strong>
                         </p>
-                        <form method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="plan" value="client">
-                            <button type="submit" class="btn btn-outline-primary btn-lg">
-                                Seleccionar Plan Cliente
-                            </button>
-                        </form>
                     </div>
                 </div>
             </div>
-            <div class="col-md-5">
-                <div class="card shadow-sm h-100">
+            <!-- Mostrar planes disponibles para seleccionar -->
+            {% for plan in planes_disponibles %}
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100 {% if plan.valor == plan_actual %}selected-plan{% endif %}">
                     <div class="card-body text-center p-5">
                         <div class="icon-container artist-icon">
                             <i class="fas fa-paint-brush fa-3x text-success"></i>
                         </div>
-                        <h3 class="card-title mb-3">Artista</h3>
+                        <h3 class="card-title mb-3">{{ plan.nombre }}</h3>
                         <p class="card-text mb-4">
-                            Comparte tu trabajo y conecta con tu audiencia.
-                            Construye tu presencia artística.
+                            Comparte tu trabajo y conecta con tu audiencia. Construye tu presencia artística.
                         </p>
                         <form method="post">
                             {% csrf_token %}
-                            <input type="hidden" name="plan" value="artist">
+                            <input type="hidden" name="plan" value="{{ plan.valor }}">
                             <button type="submit" class="btn btn-outline-success btn-lg">
-                                Seleccionar Plan Artista
+                                {% if plan.valor == plan_actual %}Plan Actual{% else %}Seleccionar{{ plan.nombre }}{% endif %}
                             </button>
                         </form>
                     </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
