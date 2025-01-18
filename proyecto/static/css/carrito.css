@@ -1,0 +1,279 @@
+/* Variables CSS */
+:root {
+    --primary-color: #DAA520; /* Marrón dorado */
+    --secondary-color: #000033; /* Azul oscuro */
+    --background-color: #FAF0E6; /* Crema claro */
+    --text-color: #333; /* Gris oscuro para texto principal */
+    --text-light: #666; /* Gris medio para texto secundario */
+    --border-color: #ddd; /* Gris claro para bordes */
+    --shadow-color: rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    --transition-speed: 0.3s;
+}
+
+/* Estilos Generales */
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+
+/* Carrito de Compras */
+h1 {
+    color: var(--secondary-color);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.cart-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    transition: all var(--transition-speed) ease;
+}
+
+.cart-item:hover {
+    box-shadow: 0 4px 8px var(--shadow-color);
+    transform: translateY(-2px);
+}
+
+.cart-item img {
+    width: 100px;
+    height: auto;
+    border-radius: 8px;
+    margin-right: 1rem;
+}
+
+.cart-item-details {
+    flex: 1;
+}
+
+.cart-item-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+}
+
+.cart-item-price {
+    font-size: 1rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+
+.cart-item-quantity {
+    display: flex;
+    align-items: center;
+}
+
+.btn-quantity {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color var(--transition-speed) ease;
+}
+
+.btn-quantity:hover {
+    background-color: #B8860B;
+}
+
+.btn-quantity:disabled {
+    background-color: var(--border-color);
+    cursor: not-allowed;
+}
+
+.quantity {
+    font-size: 1rem;
+}
+
+/* Total del Carrito */
+.cart-total {
+    font-size: 1.5rem;
+    text-align: right;
+    margin: 1rem 0;
+}
+
+/* Botón de Checkout */
+.btn-checkout {
+    display: block;
+    width: 100%;
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 1rem;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    margin-top: 1rem;
+}
+
+.btn-checkout:hover {
+    background-color: #000066;
+    transform: translateY(-2px);
+}
+
+.btn-checkout.disabled {
+    background-color: var(--border-color);
+    cursor: not-allowed;
+}
+
+/* Mensaje Flotante */
+.floating-message {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease;
+    z-index: 1000;
+}
+
+.floating-message.show {
+    opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .cart-item img {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+
+    .cart-item-details {
+        width: 100%;
+    }
+
+    .cart-item-quantity {
+        margin-top: 1rem;
+    }
+}
+
+/* Mejoras en la Accesibilidad */
+.cart-item-name, .cart-item-price {
+    word-wrap: break-word;
+}
+
+/* Añadiendo un poco de estilo al botón de checkout cuando está deshabilitado */
+.btn-checkout.disabled:hover {
+    transform: none;
+    background-color: var(--border-color);
+}
+
+/* Mejorando la legibilidad del total del carrito */
+.cart-total span {
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+/* Añadiendo espaciado para elementos dentro de .cart-item-details */
+.cart-item-details > div {
+    margin-bottom: 0.5rem;
+}
+
+/* Asegurando que el mensaje flotante no afecte la interacción con el contenido detrás de él */
+.floating-message.show::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+    border-radius: 8px;
+}
+
+/* Mejora en la visualización de los botones de cantidad para dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+    .btn-quantity {
+        padding: 0.75rem 1.25rem;
+        font-size: 1.2rem;
+    }
+}
+
+/* Ajustes adicionales para pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .container {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .cart-item {
+        padding: 0.5rem;
+    }
+
+    .cart-item img {
+        width: 80px;
+    }
+
+    .cart-item-name {
+        font-size: 1rem;
+    }
+
+    .cart-total {
+        font-size: 1.2rem;
+    }
+
+    .btn-checkout {
+        font-size: 1rem;
+    }
+}
+
+/* Estilo para el caso de carrito vacío */
+.empty-cart-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--text-light);
+    padding: 2rem;
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    margin-top: 2rem;
+}
+
+/* Animaciones suaves */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.floating-message.show {
+    animation: fadeIn 0.5s ease-in-out;
+}

@@ -1,0 +1,162 @@
+/* Variables CSS */
+:root {
+    --primary-color: #DAA520; /* Marrón dorado */
+    --secondary-color: #000033; /* Azul oscuro */
+    --background-color: #FAF0E6; /* Crema claro */
+    --text-color: #333; /* Gris oscuro para texto principal */
+    --text-light: #666; /* Gris medio para texto secundario */
+    --border-color: #ddd; /* Gris claro para bordes */
+    --shadow-color: rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    --transition-speed: 0.3s;
+}
+
+/* Estilos Generales */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+h1, h2 {
+    color: var(--secondary-color);
+    text-align: center;
+}
+
+/* Estilos para la Factura */
+.factura-details {
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+.table th, .table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table th {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.table tfoot td {
+    font-weight: bold;
+    border: none;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Estilos para el Formulario de Pago */
+form {
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--text-light);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color var(--transition-speed) ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+/* Estilos para Botones */
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    margin-top: 1rem;
+    text-decoration: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #B8860B;
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #000066;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.3rem;
+    }
+
+    .table th, .table td {
+        padding: 0.5rem;
+    }
+
+    .form-control {
+        padding: 0.5rem;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+    }
+}

@@ -45,6 +45,10 @@ class Producto(models.Model):
 
     def __str__(self):
         return 'Producto: ' + self.nombre 
+    
+    def get_absolute_url(self):
+        
+        return reverse('producto_detail', args=[str(self.id)])
 
 
 
