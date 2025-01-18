@@ -1,0 +1,209 @@
+:root {
+    --primary-color: #DAA520; /* Marrón dorado */
+    --secondary-color: #000033; /* Azul oscuro */
+    --background-color: #FFFFF0; /* Crema claro */
+    --text-color: #333; /* Gris oscuro para texto principal */
+    --text-light: #666; /* Gris medio para texto secundario */
+    --border-color: #ddd; /* Gris claro para bordes */
+    --shadow-color: rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    --transition-speed: 0.3s;
+}
+
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.product-detail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    background-color: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.product-image {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px var(--shadow-color);
+    transition: transform var(--transition-speed) ease;
+}
+
+.product-image:hover {
+    transform: scale(1.05);
+}
+
+.product-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-title {
+    font-size: 2.5rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.product-description {
+    font-size: 1rem;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+
+.product-price, .product-stock {
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
+    color: var(--text-color);
+}
+
+.product-out-of-stock {
+    color: red;
+    font-weight: bold;
+}
+
+.add-to-cart-form {
+    margin-top: 1rem;
+}
+
+.btn-add-to-cart {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    font-size: 1rem;
+}
+
+.btn-add-to-cart:hover {
+    background-color: #B8860B;
+    transform: translateY(-2px);
+}
+
+.btn-add-to-cart:disabled {
+    background-color: var(--border-color);
+    cursor: not-allowed;
+}
+
+.comments-section {
+    width: 100%;
+    max-width: 800px;
+    margin-top: 40px;
+    padding: 30px;
+    background-color: #FAF0E6;
+    border: 1px solid var(--border-color);
+    box-sizing: border-box;
+    border-radius: 8px;
+    transition: all var(--transition-speed) ease;
+}
+
+.comments-section:hover {
+    background-color: #F5E5D1;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.comments-section h2 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+    transition: color var(--transition-speed) ease;
+}
+
+.comments-section h2:hover {
+    color: var(--secondary-color);
+}
+
+form {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+form textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+form button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    font-size: 1rem;
+}
+
+form button:hover {
+    background-color: #000066;
+    transform: translateY(-2px);
+}
+
+.comments-list .comment {
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.comment-content {
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.comment-author {
+    font-weight: bold;
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+}
+
+.comment-date {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.no-comments {
+    color: var(--text-light);
+    font-style: italic;
+}
+
+/* Media Queries para dispositivos móviles */
+@media (max-width: 768px) {
+    .product-detail {
+        flex-direction: column;
+    }
+
+    .product-image {
+        max-width: 100%;
+    }
+
+    .product-info {
+        margin-top: 2rem;
+    }
+}

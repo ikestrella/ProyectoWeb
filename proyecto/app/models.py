@@ -34,10 +34,10 @@ class Artista(models.Model):
 class Producto(models.Model):
     nombre = models.CharField(max_length=100)
     imagen = models.ImageField(upload_to='productos/')
-    precio = models.IntegerField() 
+    precio = models.IntegerField()
     descripcion = models.TextField(max_length=200)
     artista = models.ForeignKey(Artista, db_column='artista', blank=True, null=True, on_delete=models.SET_NULL)
-    #verificacion espera/aceptado/rechazado/fueradestock
+    stock = models.PositiveIntegerField(default=0)
     #stock
 
     class Meta:

@@ -38,6 +38,9 @@ urlpatterns = [
     path('checkout/', views.checkout, name='checkout'),
     path('pago/', views.pago, name='pago'),
     path('procesar_pago/', views.procesar_pago, name='procesar_pago'),
+
+    path('producto/<int:producto_id>/', views.producto_detail, name='producto_detail'),
+    path('carrito/agregar/<int:producto_id>/', views.agregar_al_carrito, name='agregar_al_carrito'),
     
     path('comentario/agregar/<str:content_type>/<int:object_id>/', views.agregar_comentario, name='agregar_comentario'),
     path('comentario/editar/<int:comentario_id>/', views.editar_comentario, name='editar_comentario'),

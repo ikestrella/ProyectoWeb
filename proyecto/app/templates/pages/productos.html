@@ -32,7 +32,7 @@
                 <div class="image-container">
                     <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
                     <div class="overlay">
-                        <a href="#" class="view-product-btn">VER PRODUCTO</a>
+                        <a href="{% url 'producto_detail' producto.id %}" class="view-product-btn">VER PRODUCTO</a>
                     </div>
                 </div>
                 <div class="product-content">

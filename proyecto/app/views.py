@@ -193,6 +193,7 @@ def agregar_producto(request):
             descripcion = request.POST['descripcion']
             precio = request.POST['precio']
             imagen = request.FILES['imagen']
+            stock = request.POST['stock']
 
             usuario = request.session.get('usuario')
             artista = Artista.objects.get(usuario=usuario)
@@ -201,6 +202,7 @@ def agregar_producto(request):
                 nombre=nombre,
                 descripcion=descripcion,
                 precio=precio,
+                stock=stock,
                 imagen=imagen,
                 artista=artista 
             )
@@ -249,10 +251,12 @@ def editar_producto(request, producto_id):
         descripcion = request.POST.get('descripcion')
         precio = request.POST.get('precio')
         imagen = request.FILES.get('imagen')
+        stock = request.POST.get('stock')
 
         producto.nombre = nombre
         producto.descripcion = descripcion
         producto.precio = precio
+        producto.stock = stock
         if imagen:
             producto.imagen = imagen
         else:
@@ -750,16 +754,19 @@ def eliminar_comentario(request, comentario_id):
 def agregar_al_carrito(request, producto_id):
     usuario = request.session.get('usuario')
     if not usuario:
-        return JsonResponse({'error': 'Usuario no autenticado'}, status=401)
+        messages.error(request, 'Debes iniciar sesión para agregar productos al carrito.')
+        return redirect('login')  # Redirige al login si no está autenticado
 
     producto = get_object_or_404(Producto, id=producto_id)
     try:
         artista = Artista.objects.get(usuario=usuario)
     except Artista.DoesNotExist:
-        return JsonResponse({'error': 'El artista no existe'}, status=404)
+        messages.error(request, 'El artista no existe.')
+        return redirect('login')  # Redirige al login si el artista no existe
 
     if producto.stock < 1:
-        return JsonResponse({'error': 'Producto sin stock'}, status=400)
+        messages.error(request, 'Producto sin stock.')
+        return redirect('producto_detail', producto_id=producto_id)  # Redirige de vuelta al detalle del producto si no hay stock
 
     carrito, created = Carrito.objects.get_or_create(usuario=artista)
 
@@ -768,7 +775,8 @@ def agregar_al_carrito(request, producto_id):
     carrito_item, created = CarritoItem.objects.get_or_create(carrito=carrito, producto=producto)
     if not created:
         if carrito_item.cantidad + cantidad > producto.stock:
-            return JsonResponse({'error': 'Cantidad solicitada supera el stock disponible'}, status=400)
+            messages.error(request, 'Cantidad solicitada supera el stock disponible.')
+            return redirect('producto_detail', producto_id=producto_id)  # Redirige de vuelta al detalle del producto si no hay suficiente stock
         carrito_item.cantidad += cantidad
     else:
         carrito_item.cantidad = cantidad
@@ -782,7 +790,38 @@ def agregar_al_carrito(request, producto_id):
     total_items = sum(item.cantidad for item in carrito.items.all())
     request.session['cart_count'] = total_items
 
-    return JsonResponse({'success': 'Producto agregado al carrito', 'nuevo_stock': producto.stock, 'total_items': total_items})
+    messages.success(request, 'Producto agregado al carrito con éxito.')
+    return redirect('mostrar_carrito')
+
+def producto_detail(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    # Cambio de 'fecha' a 'fecha_creacion'
+    comentarios = Comentario.objects.filter(content_type=ContentType.objects.get_for_model(Producto), object_id=producto_id).order_by('-fecha_creacion')
+    
+    if request.method == 'POST':
+        comentario_texto = request.POST.get('comentario')
+        if comentario_texto:
+            usuario = request.session.get('usuario')
+            try:
+                autor = Artista.objects.get(usuario=usuario)
+            except Artista.DoesNotExist:
+                messages.error(request, "Debes iniciar sesión para comentar.")
+                return redirect('login')
+            
+            Comentario.objects.create(
+                autor=autor,
+                contenido=comentario_texto,
+                content_type=ContentType.objects.get_for_model(Producto),
+                object_id=producto_id
+            )
+            messages.success(request, "Comentario añadido con éxito.")
+            return redirect('producto_detail', producto_id=producto_id)
+
+    context = {
+        'producto': producto,
+        'comentarios': comentarios,
+    }
+    return render(request, 'pages/producto.html', context)
 
 def mostrar_carrito(request):
     usuario = request.session.get('usuario')
@@ -795,14 +834,19 @@ def mostrar_carrito(request):
         return HttpResponse("El artista no existe.", status=404)
 
     carrito, created = Carrito.objects.get_or_create(usuario=artista)
-    
     items = carrito.items.all()
     total = carrito.calcular_total()
 
     # Obtener el número total de productos desde la sesión
     total_items = request.session.get('cart_count', 0)
 
-    return render(request, 'pages/carrito.html', {'carrito': carrito, 'items': items, 'total': total, 'total_items': total_items})
+    context = {
+        'carrito': carrito,
+        'items': items,
+        'total': total,
+        'total_items': total_items
+    }
+    return render(request, 'pages/carrito.html', context)
 
 def checkout(request):
     usuario = request.session.get('usuario')
@@ -842,6 +886,7 @@ def actualizar_cantidad_carrito(request, item_id, accion):
         if carrito_item.producto.stock > 0:
             carrito_item.cantidad += 1
             carrito_item.producto.stock -= 1
+            
             carrito_item.producto.save()
             carrito_item.save()
         else:
@@ -859,8 +904,9 @@ def actualizar_cantidad_carrito(request, item_id, accion):
 
     total_items = sum(item.cantidad for item in carrito_item.carrito.items.all())
     total = carrito_item.carrito.calcular_total()
-
-    return JsonResponse({'success': 'Cantidad actualizada', 'nuevo_stock': carrito_item.producto.stock, 'total_items': total_items, 'total': total, 'cantidad': carrito_item.cantidad, 'producto_id': carrito_item.producto.id})
+    request.session['cart_count'] = total_items
+    
+    return redirect('mostrar_carrito')
 
 def procesar_pago(request):
     if request.method == 'POST':
