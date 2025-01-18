@@ -91,9 +91,7 @@ def configuracion(request):
             return redirect('perfil')
         
         elif 'cancelar_plan' in request.POST and artista.plan != 'basico':
-            # Cancel current plan and revert to basic
             artista.plan = 'basico'
-            # Delete related obras
             Obra.objects.filter(artista=artista).delete()
             Producto.objects.filter(artista=artista).delete()
             artista.save()
