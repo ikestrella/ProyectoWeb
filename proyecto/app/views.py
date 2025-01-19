@@ -932,6 +932,7 @@ def procesar_pago(request):
             
             # Borrar los productos del carrito después de que el pago se haya realizado con éxito
             carrito.items.all().delete()
+            request.session['cart_count'] = 0
             messages.add_message(request, messages.SUCCESS, 'Pago realizado con éxito y carrito limpiado.')
             return render(request, 'pages/checkout.html', {'items': items, 'total': total, 'factura': True})
         else:
