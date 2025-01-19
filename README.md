@@ -43,8 +43,8 @@
 ⚙️ **Configuración del Proyecto**
 
 ### Prerrequisitos  
-- Python 3.11.3 
-- Django 5.0
+- Python 3.11.2
+- Django 4.2.16
 - Bootstrap 5.0.2
 -  XAMPP 3.3.0
 - MYSQL  
@@ -92,9 +92,6 @@ npm start
 
 **Iam Estrella**  
 Correo: ikestrella@utpl.edu.ec
-
-**Jean Alejo**
-Correo: jgalejo@utpl.edu.ec
 
 
 
