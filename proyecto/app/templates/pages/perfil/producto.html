@@ -83,23 +83,36 @@
                     </div>
                     <div class="gallery">
                         {% for p in productos %}
-                        <div class="gallery-item">
-                            <div class="gallery-image">
-                                <img src="{{ p.imagen.url }}" class="img-fluid" alt="{{ p.nombre }}">
-                                <div class="overlay">
-                                    <div class="text">
-                                        <h5 class="gallery-title">{{ p.nombre }}</h5>
-                                        <p class="gallery-text">{{ p.descripcion }}</p>
-                                        <p class="gallery-price"><strong>{{ p.precio }}$</strong></p>
-                                        {% if es_mi_perfil %}
-                                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ p.id }}">editar</button>
-                                        <button class="btn btn-sm btn-danger" onclick="confirmarBorrar('{{ p.id }}')">eliminar</button>
-                                        {% endif %}
-                                        <button class="btn btn-sm btn-warning">Ver</button>
+                            {% if es_mi_perfil or p.verificacion == 'ACEPTADO' %}
+                            <div class="gallery-item">
+                                <div class="gallery-image">
+                                    <img src="{{ p.imagen.url }}" class="img-fluid" alt="{{ p.nombre }}">
+                                    <div class="overlay">
+                                        <div class="text">
+                                            <h5 class="gallery-title">{{ p.nombre }}</h5>
+                                            <p class="gallery-text">{{ p.descripcion }}</p>
+                                            <p class="gallery-price"><strong>{{ p.precio }}$</strong></p>
+                                            {% if es_mi_perfil %}
+                                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ p.id }}">Editar</button>
+                                            <button class="btn btn-sm btn-danger" onclick="confirmarBorrar('{{ p.id }}')">Eliminar</button>
+                                            {% endif %}
+                                            <a href="{% url 'producto_detail' p.id %}" class="btn btn-sm btn-warning">Ver</a>
+                                            {% if es_mi_perfil %}
+                                            <p class="gallery-status">
+                                                {% if p.verificacion == 'ACEPTADO' %}           
+                                                    <span class="badge bg-success">Aceptado</span>
+                                                {% elif p.verificacion == 'EN_ESPERA' %}
+                                                    <span class="badge bg-warning text-dark">En Espera</span>
+                                                {% else %}
+                                                    <span class="badge bg-danger">Rechazado</span>
+                                                {% endif %}
+                                            </p>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                            {% endif %}
                         {% empty %}
                         <div class="alert alert-warning text-center">No se encontraron productos.</div>
                         {% endfor %}

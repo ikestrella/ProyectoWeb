@@ -104,7 +104,6 @@ body{
 
 .gallery-item {
   flex: 1 1 250px;
-  /* This makes items responsive */
   max-width: 300px;
   position: relative;
   overflow: hidden;
@@ -238,6 +237,10 @@ main {
   background-color: #000;
   opacity: 0.5;
   pointer-events: none;
+}
+
+.gallery-status {
+  margin-top: 20px;
 }
 
 .modal-dialog {

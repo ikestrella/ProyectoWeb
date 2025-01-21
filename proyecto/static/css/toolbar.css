@@ -8,6 +8,7 @@ nav {
     background-color: white;
     box-shadow: none;
     border-bottom: 1px solid black;
+    position: relative;
 }
 
 .nav-container {
@@ -24,6 +25,7 @@ nav {
     display: flex;
     align-items: center;
     gap: 12px;
+    z-index: 20;
 }
 
 .logo {
@@ -75,11 +77,50 @@ nav {
     border: none;
     cursor: pointer;
     color: #4B5563;
+    z-index: 20;
+    transition: color 0.3s;
+}
+
+.mobile-menu.active {
+    color: #111827;
+}
+
+.cart-icon {
+    position: relative;
+    display: inline-flex;
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #C4B5A4;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.75rem;
 }
 
 @media (max-width: 768px) {
     .nav-links {
-        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background-color: white;
+        padding: 100px 2rem 2rem;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        height: 100vh;
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 10;
+    }
+
+    .nav-links.show {
+        transform: translateX(0);
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
     }
 
     .mobile-menu {

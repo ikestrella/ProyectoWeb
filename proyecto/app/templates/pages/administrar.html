@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de ArtistasLatino</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/administrar.css' %}">
+</head>
+<body>
+    <header>
+        {% include '../components/toolbar.html' %}
+    </header>
+
+    <main>
+        <h1>Administración</h1>
+
+        <!-- Search Form -->
+        <form method="get" action=".">
+            <input type="text" name="q" placeholder="Buscar productos u obras..." value="{{ query }}">
+            <button type="submit">Buscar</button>
+        </form>
+
+        <!-- Productos -->
+        <h2>Productos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Foto</th>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Descripción</th>
+                    <th>Artista</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                <tr>
+                    <td data-label="Foto"><img src="{{ producto.imagen.url }}" alt="Foto de {{ producto.nombre }}"></td>
+                    <td data-label="Nombre">{{ producto.nombre }}</td>
+                    <td data-label="Estado">{{ producto.verificacion }}</td>
+                    <td data-label="Descripción">{{ producto.descripcion|truncatewords:10 }}</td>
+                    <td data-label="Artista"><a href="{% url 'perfil' producto.artista.id %}">{{ producto.artista.usuario }}</a></td>
+                    <td data-label="Acciones" class="actions">
+                        <form action="{% url 'accion_Producto' producto.id %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="accion" value="aceptar" style="background-color: green;" class="btn-accept">Aceptar</button>
+                            <button type="submit" name="accion" value="rechazar" style="background-color: red;" class="btn-reject">Rechazar</button>
+                        </form>
+                        <form action="{% url 'eliminar_Producto' producto.id %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="accion" value="eliminar" style="background-color: #DAA520;" class="btn-delete">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" data-label="No hay productos">No hay productos disponibles.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- Pagination for Products -->
+        <div class="pagination">
+            <span class="step-links">
+                {% if productos.has_previous %}
+                    <a href="?page_producto=1{{ query_string }}">« first</a>
+                    <a href="?page_producto={{ productos.previous_page_number }}{{ query_string }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ productos.number }} of {{ productos.paginator.num_pages }}.
+                </span>
+
+                {% if productos.has_next %}
+                    <a href="?page_producto={{ productos.next_page_number }}{{ query_string }}">next</a>
+                    <a href="?page_producto={{ productos.paginator.num_pages }}{{ query_string }}">last »</a>
+                {% endif %}
+            </span>
+        </div>
+
+        <!-- Obras -->
+        <h2>Obras</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Foto</th>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Descripción</th>
+                    <th>Artista</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obra in obras %}
+                <tr>
+                    <td data-label="Foto"><img src="{{ obra.imagen.url }}" alt="Foto de {{ obra.nombre }}"></td>
+                    <td data-label="Nombre">{{ obra.nombre }}</td>
+                    <td data-label="Estado">{{ obra.verificacion }}</td>
+                    <td data-label="Descripción">{{ obra.descripcion|truncatewords:10 }}</td>
+                    <td data-label="Artista"><a href="{% url 'perfil' obra.artista.id %}">{{ obra.artista.usuario }}</a></td>
+                    <td data-label="Acciones" class="actions">
+                        <form action="{% url 'accion_Obra' obra.id %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="accion" value="aceptar" style="background-color: green;" class="btn-accept">Aceptar</button>
+                            <button type="submit" name="accion" value="rechazar" style="background-color: red;" class="btn-reject">Rechazar</button>
+                        </form>
+                        <form action="{% url 'eliminar_Obra' obra.id %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="accion" value="eliminar" style="background-color: #DAA520;" class="btn-delete">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" data-label="No hay obras">No hay obras disponibles.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- Pagination for Works -->
+        <div class="pagination">
+            <span class="step-links">
+                {% if obras.has_previous %}
+                    <a href="?page_obra=1{{ query_string }}">« first</a>
+                    <a href="?page_obra={{ obras.previous_page_number }}{{ query_string }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ obras.number }} of {{ obras.paginator.num_pages }}.
+                </span>
+
+                {% if obras.has_next %}
+                    <a href="?page_obra={{ obras.next_page_number }}{{ query_string }}">next</a>
+                    <a href="?page_obra={{ obras.paginator.num_pages }}{{ query_string }}">last »</a>
+                {% endif %}
+            </span>
+        </div>
+    </main>
+
+    <footer>
+        {% include '../components/footer.html' %}
+    </footer>
+</body>
+</html>

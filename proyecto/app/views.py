@@ -48,13 +48,11 @@ def select_plan(request):
     if request.method == 'POST':
         plan = request.POST.get('plan')
         if plan in ['plan1', 'plan2', 'plan3']:
-            # Cambiar al plan seleccionado
             artista.plan = plan
             artista.save()
             messages.success(request, f'Has actualizado tu plan a {plan}.')
         return redirect('configuracion')
     
-    # Preparamos el contexto para mostrar los planes
     planes_disponibles = [
         {'nombre': 'Plan 1', 'valor': 'plan1'},
         {'nombre': 'Plan 2', 'valor': 'plan2'},
@@ -69,6 +67,105 @@ def select_plan(request):
     
     return render(request, 'pages/select_plan.html', context)
 
+
+def administrarPagina(request):
+    usuario = request.session.get('usuario')
+    if not usuario:
+        return redirect('login') 
+
+    try:
+        artista = Artista.objects.get(usuario=usuario)
+        if artista.plan != 'admin':
+            return redirect('inicio')
+    except Artista.DoesNotExist:
+        return redirect('login')
+
+    query = request.GET.get('q', '')
+
+    productos = Producto.objects.order_by('verificacion')
+    obras = Obra.objects.order_by('verificacion')
+
+    if query:
+        productos = productos.filter(
+            Q(nombre__icontains=query) | 
+            Q(descripcion__icontains=query) | 
+            Q(artista__usuario__icontains=query)
+        )
+        obras = obras.filter(
+            Q(nombre__icontains=query) | 
+            Q(descripcion__icontains=query) | 
+            Q(artista__usuario__icontains=query)
+        )
+
+    paginator_producto = Paginator(productos, 10)
+    paginator_obra = Paginator(obras, 10) 
+
+    page_producto = request.GET.get('page_producto', 1)
+    page_obra = request.GET.get('page_obra', 1)
+
+    productos_page = paginator_producto.get_page(page_producto)
+    obras_page = paginator_obra.get_page(page_obra)
+
+    query_string = '&q=' + query if query else ''
+
+    context = {
+        'productos': productos_page,
+        'obras': obras_page,
+        'query': query,
+        'query_string': query_string,
+    }
+    return render(request, 'pages/administrar.html', context)
+
+def accion_producto(request, producto_id):
+    if request.method == 'POST':
+        producto = Producto.objects.get(id=producto_id)
+        accion = request.POST.get('accion')
+
+        if accion == 'aceptar':
+            producto.verificacion = 'ACEPTADO'
+            producto.save()
+        elif accion == 'rechazar':
+            producto.verificacion = 'RECHAZADO'
+            producto.save()
+
+    return redirect('administrarPagina')
+
+def accion_obra(request, obra_id):
+    if request.method == 'POST':
+        obra = Obra.objects.get(id=obra_id)
+        accion = request.POST.get('accion')
+
+        if accion == 'aceptar':
+            obra.verificacion = 'ACEPTADO'
+            obra.save()
+        elif accion == 'rechazar':
+            obra.verificacion = 'RECHAZADO'
+            obra.save()
+
+    return redirect('administrarPagina')
+
+def eliminar_producto(request, producto_id):
+    if request.method == 'POST':
+        try:
+            producto = Producto.objects.get(id=producto_id)
+            producto.delete()
+            messages.success(request, 'El producto ha sido eliminado.')
+        except Producto.DoesNotExist:
+            messages.error(request, 'El producto no existe.')
+
+    return redirect('administrarPagina')
+
+def eliminar_obra(request, obra_id):
+    if request.method == 'POST':
+        try:
+            obra = Obra.objects.get(id=obra_id)
+            obra.delete()
+            messages.success(request, 'La obra ha sido eliminada.')
+        except Obra.DoesNotExist:
+            messages.error(request, 'La obra no existe.')
+
+    return redirect('administrarPagina')
+
 def configuracion(request):
     usuario = request.session.get('usuario')
     if not usuario:
@@ -81,13 +178,13 @@ def configuracion(request):
 
     if request.method == 'POST':
         if 'editar_perfil' in request.POST:
-            # Handle profile edit logic here
             artista.acerca = request.POST.get('acerca', artista.acerca)
             artista.correo = request.POST.get('correo', artista.correo)
             artista.ncontacto = request.POST.get('ncontacto', artista.ncontacto)
+            if 'imagen' in request.FILES:
+                artista.imagen = request.FILES['imagen']
             artista.save()
             messages.success(request, "Perfil actualizado con éxito.")
-            # Redirigir al perfil después de guardar los cambios
             return redirect('perfil')
         
         elif 'cancelar_plan' in request.POST and artista.plan != 'basico':
@@ -130,7 +227,7 @@ def presentar_perfil(request, artista_id=None):
         'productos': productos,
         'artista': artista,
         'es_mi_perfil': artista_logueado == artista if artista_logueado else False,
-        'planes': Artista.PLAN_CHOICES  # Add this to pass the plan choices to the template
+        'planes': Artista.PLAN_CHOICES 
     }
     return render(request, 'pages/perfil/artista.html', context)
 
@@ -146,6 +243,7 @@ def login(request):
 
         if contrasenia == artista.contrasenia:
             request.session['usuario'] = artista.usuario
+            request.session['plan'] = artista.plan
             return redirect('perfil')
         else:
             return render(request, 'pages/login.html', {'error': 'Contraseña incorrecta.'})
@@ -540,7 +638,7 @@ def eliminar_evento(request):
 
 def presentar_artistas(request):
     busqueda = request.GET.get("q")
-    artistas = Artista.objects.all().exclude(plan='basico')
+    artistas = Artista.objects.all().exclude(plan='basico').exclude(plan='admin')
 
     if busqueda:
         artistas = Artista.objects.filter(
@@ -563,7 +661,7 @@ def presentar_artistas(request):
 
 def presentar_pagina_obras(request):
     busqueda = request.GET.get("q")
-    obras = Obra.objects.all()
+    obras = Obra.objects.all().filter(verificacion='ACEPTADO')
 
     if busqueda:
         obras = Obra.objects.filter(
@@ -587,7 +685,7 @@ def presentar_pagina_obras(request):
 
 def presentar_pagina_productos(request):
     busqueda = request.GET.get("q")
-    productos = Producto.objects.all()
+    productos = Producto.objects.all().filter(verificacion='ACEPTADO')
 
     if busqueda:
         productos = Producto.objects.filter(
@@ -680,19 +778,18 @@ def gestionar_participacion(request, evento_id):
         'es_artista': es_artista,
         'artista': artista,
         'ya_solicitado': ya_solicitado if not es_artista else False,
-        'comentarios': comentarios,  # Añadimos los comentarios al contexto
+        'comentarios': comentarios,
     }
     return render(request, 'pages/perfil/evento.html', context)
 
 
 def presentar_obra(request, obra_id):
     obra = get_object_or_404(Obra, id=obra_id)
-    # Obtiene todos los comentarios asociados a esta obra
     comentarios = Comentario.objects.filter(content_type=ContentType.objects.get_for_model(Obra), object_id=obra_id)
     
     context = {
         'obra': obra,
-        'comentarios': comentarios,  # Añadimos los comentarios al contexto
+        'comentarios': comentarios,
     }
     return render(request, 'pages/obra.html', context)
 
@@ -755,38 +852,36 @@ def agregar_al_carrito(request, producto_id):
     usuario = request.session.get('usuario')
     if not usuario:
         messages.error(request, 'Debes iniciar sesión para agregar productos al carrito.')
-        return redirect('login')  # Redirige al login si no está autenticado
+        return redirect('login')
 
     producto = get_object_or_404(Producto, id=producto_id)
     try:
         artista = Artista.objects.get(usuario=usuario)
     except Artista.DoesNotExist:
         messages.error(request, 'El artista no existe.')
-        return redirect('login')  # Redirige al login si el artista no existe
+        return redirect('login')
 
     if producto.stock < 1:
         messages.error(request, 'Producto sin stock.')
-        return redirect('producto_detail', producto_id=producto_id)  # Redirige de vuelta al detalle del producto si no hay stock
+        return redirect('producto_detail', producto_id=producto_id)
 
     carrito, created = Carrito.objects.get_or_create(usuario=artista)
 
-    cantidad = 1  # Cantidad predeterminada
+    cantidad = 1 
 
     carrito_item, created = CarritoItem.objects.get_or_create(carrito=carrito, producto=producto)
     if not created:
         if carrito_item.cantidad + cantidad > producto.stock:
             messages.error(request, 'Cantidad solicitada supera el stock disponible.')
-            return redirect('producto_detail', producto_id=producto_id)  # Redirige de vuelta al detalle del producto si no hay suficiente stock
+            return redirect('producto_detail', producto_id=producto_id) 
         carrito_item.cantidad += cantidad
     else:
         carrito_item.cantidad = cantidad
     carrito_item.save()
 
-    # Actualizar el stock del producto
     producto.stock -= cantidad
     producto.save()
 
-    # Calcular el número total de productos en el carrito
     total_items = sum(item.cantidad for item in carrito.items.all())
     request.session['cart_count'] = total_items
 
@@ -795,7 +890,6 @@ def agregar_al_carrito(request, producto_id):
 
 def producto_detail(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
-    # Cambio de 'fecha' a 'fecha_creacion'
     comentarios = Comentario.objects.filter(content_type=ContentType.objects.get_for_model(Producto), object_id=producto_id).order_by('-fecha_creacion')
     
     if request.method == 'POST':
@@ -837,7 +931,6 @@ def mostrar_carrito(request):
     items = carrito.items.all()
     total = carrito.calcular_total()
 
-    # Obtener el número total de productos desde la sesión
     total_items = request.session.get('cart_count', 0)
 
     context = {
@@ -859,7 +952,7 @@ def checkout(request):
         return HttpResponse("El artista no existe.", status=404)
 
     carrito = Carrito.objects.get(usuario=artista)
-    items = list(carrito.items.all())  # Convertir a lista para mantener los items después de limpiar el carrito
+    items = list(carrito.items.all())
 
     if not items:
         messages.add_message(request, messages.WARNING, 'No puedes proceder al pago sin productos en el carrito.')
@@ -915,8 +1008,6 @@ def procesar_pago(request):
         fecha_expiracion = request.POST.get('fecha_expiracion')
         cvv = request.POST.get('cvv')
 
-        # Aquí puedes agregar la lógica para procesar el pago con una pasarela de pago
-        # Simulamos que el pago se ha realizado con éxito
         pago_realizado = True
 
         if pago_realizado:
@@ -927,10 +1018,9 @@ def procesar_pago(request):
                 return HttpResponse("El artista no existe.", status=404)
 
             carrito = Carrito.objects.get(usuario=artista)
-            items = list(carrito.items.all())  # Convertir a lista para mantener los items después de limpiar el carrito
+            items = list(carrito.items.all())
             total = carrito.calcular_total()
             
-            # Borrar los productos del carrito después de que el pago se haya realizado con éxito
             carrito.items.all().delete()
             request.session['cart_count'] = 0
             messages.add_message(request, messages.SUCCESS, 'Pago realizado con éxito y carrito limpiado.')

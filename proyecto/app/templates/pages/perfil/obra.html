@@ -55,8 +55,12 @@
                         </div>
                         {% endif %}
                     </div>
-                    <div class="gallery">
-                        {% for o in obras %}
+                    
+                </section>
+                <br>
+                <div class="gallery">
+                    {% for o in obras %}
+                        {% if es_mi_perfil or o.verificacion == 'ACEPTADO' %}
                         <div class="gallery-item">
                             <div class="gallery-image">
                                 <img src="{{ o.imagen.url }}" class="img-fluid" alt="{{ o.nombre }}">
@@ -71,16 +75,26 @@
                                             onclick="confirmarBorrar('{{ o.id }}')">Eliminar</button>
                                         {% endif %}
                                         <a href="{% url 'mostrarObra' o.id %}" class="view-obra-btn">VER</a>
+                                        {% if es_mi_perfil %}
+                                        <p class="gallery-status">
+                                            {% if o.verificacion == 'ACEPTADO' %}           
+                                                <span class="badge bg-success">Aceptado</span>
+                                            {% elif o.verificacion == 'EN_ESPERA' %}
+                                                <span class="badge bg-warning text-dark">En Espera</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Rechazado</span>
+                                            {% endif %}
+                                        </p>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        {% empty %}
-                        <div class="alert alert-warning text-center">No se encontraron obras.</div>
-                        {% endfor %}
-                    </div>
-                </section>
-                <br>
+                        {% endif %}
+                    {% empty %}
+                    <div class="alert alert-warning text-center">No se encontraron obras.</div>
+                    {% endfor %}
+                </div>
             </main>
         </div>
     </div>

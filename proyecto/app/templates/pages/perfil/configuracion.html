@@ -43,8 +43,16 @@
                 <div class="alert alert-success text-center">
                     <h1>Configuración de Perfil</h1>
                 </div>
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="imagen" class="form-label">Foto de Perfil</label>
+                        <div class="d-flex align-items-center">
+                            <img src="{{ artista.imagen.url }}" alt="Profile Picture" class="rounded me-3" style="max-width: 100px;">
+                            <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
+                        </div>
+                        <small class="form-text text-muted">Selecciona una nueva imagen para tu perfil.</small>
+                    </div>
                     <div class="mb-3">
                         <label for="acerca" class="form-label">Acerca de mí</label>
                         <textarea class="form-control" id="acerca" name="acerca" rows="3">{{ artista.acerca }}</textarea>
@@ -58,10 +66,12 @@
                         <input type="text" class="form-control" id="ncontacto" name="ncontacto" value="{{ artista.ncontacto }}">
                     </div>
                     <h3>Plan Actual: <span class="badge bg-primary">{{ artista.get_plan_display }}</span></h3>
+                    {% if artista.plan != 'admin' %}
                     {% if artista.plan != 'basico' %}
                     <button type="submit" name="cancelar_plan" class="btn btn-danger">Cancelar Plan</button>
                     {% endif %}
                     <button type="submit" name="upgradear_plan" class="btn btn-warning">Upgradear Plan</button>
+                    {% endif %}
                     <button type="submit" name="editar_perfil" class="btn btn-success">Guardar Cambios</button>
                 </form>
             </main>

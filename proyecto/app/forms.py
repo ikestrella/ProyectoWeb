@@ -6,31 +6,24 @@ class UserRegistrationForm(forms.ModelForm):
         label='Confirmar Contraseña',
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirmar Contraseña'})
     )
-    ncontacto = forms.CharField(
-        label='Número de Contacto', 
-        max_length=15, 
-        required=True,  
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Tu número de contacto'})
-    )
-    imagen = forms.ImageField(
-        label='Foto de Perfil',
-        required=True,  
-        widget=forms.FileInput(attrs={'class': 'form-control-file', 'accept': 'image/*'})
-    )
 
     class Meta:
         model = Artista
-        fields = ['usuario', 'correo', 'contrasenia', 'password2', 'ncontacto', 'imagen']
+        fields = ['usuario', 'contrasenia', 'password2', 'correo']
         widgets = {
-            'usuario': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Ingresa un usuario'}),
-            'correo': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Tu correo electronico'}),
-            'contrasenia': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Ingresar contraseña'})
+            'usuario': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingresa un usuario'}),
+            'contrasenia': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Ingresar contraseña'}),
+            'correo': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Tu correo electrónico (opcional)'})
         }
         labels = {
             'usuario': 'Nombre de Usuario',
-            'correo': 'Correo Electrónico',
-            'contrasenia': 'Contraseña'
+            'contrasenia': 'Contraseña',
+            'correo': 'Correo Electrónico'
         }
+
+    def __init__(self, *args, **kwargs):
+        super(UserRegistrationForm, self).__init__(*args, **kwargs)
+        self.fields['correo'].required = False
 
     def clean(self):
         cleaned_data = super().clean()

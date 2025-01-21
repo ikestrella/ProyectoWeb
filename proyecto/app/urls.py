@@ -46,4 +46,9 @@ urlpatterns = [
     path('comentario/editar/<int:comentario_id>/', views.editar_comentario, name='editar_comentario'),
     path('comentario/eliminar/<int:comentario_id>/', views.eliminar_comentario, name='eliminar_comentario'),
     
+    path('administrar/', views.administrarPagina, name='administrarPagina'),
+    path('accion-producto/<int:producto_id>/', views.accion_producto, name='accion_Producto'),
+    path('accion-obra/<int:obra_id>/', views.accion_obra, name='accion_Obra'),
+    path('eliminar-producto/<int:producto_id>/', views.eliminar_producto, name='eliminar_Producto'),
+    path('eliminar-obra/<int:obra_id>/', views.eliminar_obra, name='eliminar_Obra'),
 ]

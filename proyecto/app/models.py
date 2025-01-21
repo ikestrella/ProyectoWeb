@@ -1,10 +1,12 @@
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
-from django.urls import reverse  # Asegúrate de que esta importación está presente
+from django.urls import reverse
 
 
 # Create your models here.
 
+
+from django.db import models
 
 class Artista(models.Model):
     PLAN_CHOICES = [
@@ -14,21 +16,23 @@ class Artista(models.Model):
         ('plan3', 'Plan 3'),
         ('admin', 'Admin'),
     ]
-    imagen = models.ImageField(upload_to='artistas/')
-    usuario = models.CharField(max_length=100, unique=True) 
+    
+    # Mandatory fields
+    usuario = models.CharField(max_length=100, unique=True)
     contrasenia = models.CharField(max_length=128)
-    acerca = models.CharField(max_length=400)
-    correo = models.EmailField(max_length=100, unique=True)
-    ncontacto = models.CharField(max_length=15)
+    
+    # Optional fields with default values where appropriate
+    imagen = models.ImageField(upload_to='artistas/', blank=True, null=True, default='artistas/avatar.png')
+    acerca = models.CharField(max_length=400, blank=True, null=True)
+    correo = models.EmailField(max_length=100, unique=True, blank=True, null=True)
+    ncontacto = models.CharField(max_length=15, blank=True, null=True)
     plan = models.CharField(max_length=10, choices=PLAN_CHOICES, default='basico')
 
     class Meta:
         db_table = 'artista'
 
     def __str__(self):
-        return  self.usuario
-
-#crear clase para los admins para que puedan administrar la pagina(usuario/contrasenia)
+        return self.usuario
 
 
 class Producto(models.Model):
@@ -38,7 +42,13 @@ class Producto(models.Model):
     descripcion = models.TextField(max_length=200)
     artista = models.ForeignKey(Artista, db_column='artista', blank=True, null=True, on_delete=models.SET_NULL)
     stock = models.PositiveIntegerField(default=0)
-    #stock
+    ESTADOS_VERIFICACION = [
+        ('EN_ESPERA', 'En Espera'),
+        ('ACEPTADO', 'Aceptado'),
+        ('RECHAZADO', 'Rechazado'),
+    ]
+    verificacion = models.CharField(max_length=20, choices=ESTADOS_VERIFICACION, default='EN_ESPERA')
+
 
     class Meta:
         db_table = 'producto'
@@ -58,7 +68,13 @@ class Obra(models.Model):
     descripcion = models.TextField(max_length=255)
     imagen = models.ImageField(upload_to='obras/')
     artista = models.ForeignKey(Artista, db_column='artista', blank=True, null=True, on_delete=models.SET_NULL)
-    #verificacion espera/aceptado/rechazado
+    ESTADOS_VERIFICACION = [
+        ('EN_ESPERA', 'En Espera'),
+        ('ACEPTADO', 'Aceptado'),
+        ('RECHAZADO', 'Rechazado'),
+    ]
+    verificacion = models.CharField(max_length=20, choices=ESTADOS_VERIFICACION, default='EN_ESPERA')
+
 
     class Meta:
         db_table = 'obra'
@@ -67,7 +83,6 @@ class Obra(models.Model):
         return 'Obra: ' + self.nombre + ' Por: ' + self.artista.usuario
     
     def get_absolute_url(self):
-        # Usa la importación de 'reverse' aquí
         return reverse('mostrarObra', args=[str(self.id)])
 
 
@@ -76,7 +91,7 @@ class Evento(models.Model):
     titulo = models.CharField(max_length=200)
     descripcion = models.TextField()
     ubicacion = models.CharField(max_length=255)
-    imagen = models.ImageField(upload_to='eventos/', null=True, blank=True)  # Añadido
+    imagen = models.ImageField(upload_to='eventos/', null=True, blank=True)
     fecha_inicio = models.DateTimeField()
     fecha_fin = models.DateTimeField(null=True, blank=True)
     creado_en = models.DateTimeField(auto_now_add=True)
@@ -90,7 +105,6 @@ class Evento(models.Model):
         return self.titulo
     
     def get_absolute_url(self):
-        # Cambia 'mostrarEvento' por el nombre correcto de la URL
         return reverse('gestionarParticipacion', args=[str(self.id)])
     
 
@@ -113,7 +127,7 @@ class ParticipacionEvento(models.Model):
         return f'{self.artista.usuario} en {self.evento.titulo} - Estado: {self.get_estado_display()}'
     
 
-#agregar
+
 class Carrito(models.Model):
     usuario = models.ForeignKey(Artista, on_delete=models.CASCADE)
     creado = models.DateTimeField(auto_now_add=True)
@@ -141,8 +155,6 @@ class Comentario(models.Model):
     contenido = models.TextField()
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_modificacion = models.DateTimeField(auto_now=True)
-    
-    # Relaciones polimórficas para permitir comentarios en diferentes tipos de objetos
     content_type = models.ForeignKey('contenttypes.ContentType', on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
