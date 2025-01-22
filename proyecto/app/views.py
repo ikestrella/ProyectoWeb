@@ -252,9 +252,9 @@ def login(request):
         return render(request, 'pages/login.html')
 
 def presentar_inicio(request):
-    artistas = Artista.objects.all().exclude(plan='basico')
-    productos = Producto.objects.all()
-    obras = Obra.objects.all()
+    artistas = Artista.objects.all().exclude(plan='basico').exclude(plan='admin')[:3]
+    productos = Producto.objects.all().filter(verificacion='ACEPTADO')[:4]
+    obras = Obra.objects.all().filter(verificacion='ACEPTADO')[:3]
 
     return render(request, 'pages/inicio.html', {
         'artistas': artistas,
@@ -315,9 +315,10 @@ def presentar_productos(request, artista_id=None):
     usuario = request.session.get('usuario')
     if not usuario and not artista_id:
         return redirect('login')
-
     if artista_id:
         artista = get_object_or_404(Artista, id=artista_id)
+    elif artista.plan == 'basico':
+        return redirect('perfil')
     else:
         try:
             artista = Artista.objects.get(usuario=usuario)
