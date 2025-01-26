@@ -317,14 +317,15 @@ def presentar_productos(request, artista_id=None):
         return redirect('login')
     if artista_id:
         artista = get_object_or_404(Artista, id=artista_id)
-    elif artista.plan == 'basico':
-        return redirect('perfil')
     else:
         try:
             artista = Artista.objects.get(usuario=usuario)
+            if artista.plan == 'basico':
+                return redirect('perfil')
+            elif artista.plan == 'plan1':
+                return redirect('perfil')
         except Artista.DoesNotExist:
             return HttpResponse("El artista no existe.", status=404)
-
     productos = Producto.objects.filter(artista=artista)
     context = {
         'productos': productos,
@@ -409,6 +410,8 @@ def presentar_obras(request, artista_id=None):
     else:
         try:
             artista = Artista.objects.get(usuario=usuario)
+            if artista.plan == 'basico':
+                return redirect('perfil')
         except Artista.DoesNotExist:
             return HttpResponse("El artista no existe.", status=404)
 
