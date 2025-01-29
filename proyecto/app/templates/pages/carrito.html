@@ -21,9 +21,9 @@
                     <div class="cart-item-name">{{ item.producto.nombre }}</div>
                     <div class="cart-item-price" data-price="{{ item.producto.precio }}">{{ item.producto.precio }}$</div>
                     <div class="cart-item-quantity">
-                        <button class="btn-quantity" data-action="disminuir">-</button>
+                        <button class="btn-quantity" data-action="disminuir"><a href="{% url 'mostrar_carrito' %}">-</a></button>
                         <span class="quantity">{{ item.cantidad }}</span>
-                        <button class="btn-quantity" data-action="incrementar">+</button>
+                        <button class="btn-quantity" data-action="incrementar"><a href="{% url 'mostrar_carrito' %}">+</a></button>
                     </div>
                 </div>
             </li>

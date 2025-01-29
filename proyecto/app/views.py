@@ -714,18 +714,16 @@ from django.contrib.contenttypes.models import ContentType
 
 def gestionar_participacion(request, evento_id):
     usuario = request.session.get('usuario')
-    if not usuario:
-        return redirect('login')
-
+    
     try:
-        artista = Artista.objects.get(usuario=usuario)
+        artista = Artista.objects.get(usuario=usuario) if usuario else None
     except Artista.DoesNotExist:
         es_artista = False
         artista = None
     else:
         evento = get_object_or_404(Evento, id=evento_id)
         es_artista = (evento.artista == artista)
-        ya_solicitado = ParticipacionEvento.objects.filter(artista=artista, evento=evento).exists()
+        ya_solicitado = ParticipacionEvento.objects.filter(artista=artista, evento=evento).exists() if artista else False
 
     comentarios = Comentario.objects.filter(content_type=ContentType.objects.get_for_model(Evento), object_id=evento_id)
 
@@ -758,6 +756,8 @@ def gestionar_participacion(request, evento_id):
         participaciones = ParticipacionEvento.objects.filter(evento=evento).exclude(estado='RECHAZADO').order_by('-solicitado_en')
     else:
         if request.method == 'POST' and request.POST.get('accion') == 'participar':
+            if not usuario:
+                return redirect('login') 
             try:
                 with transaction.atomic():
                     if artista is None:
@@ -781,11 +781,10 @@ def gestionar_participacion(request, evento_id):
         'participaciones': participaciones,
         'es_artista': es_artista,
         'artista': artista,
-        'ya_solicitado': ya_solicitado if not es_artista else False,
+        'ya_solicitado': ya_solicitado,
         'comentarios': comentarios,
     }
     return render(request, 'pages/perfil/evento.html', context)
-
 
 def presentar_obra(request, obra_id):
     obra = get_object_or_404(Obra, id=obra_id)
