@@ -7,6 +7,15 @@
     --transition: all 0.3s ease;
 }
 
+/* General styles */
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    color: var(--text-dark);
+    background-color: #f0f0f0;
+    margin: 0;
+    min-height: 100vh;
+}
+
 .sidebar {
     top: 0;
     bottom: 0;
@@ -82,7 +91,7 @@
 }
 
 main {
-    margin-left: 16rem;
+    margin-left: 0; /* Changed from 16rem to 0 for mobile */
     padding: 2rem;
 }
 
@@ -102,7 +111,7 @@ main {
 
 .gallery-item {
     position: relative;
-    flex: 1 1 250px;
+    flex: 1 1 250px; /* This will adjust based on screen size */
     max-width: 400px;
     overflow: visible;
     border-radius: 0.5rem;
@@ -171,7 +180,6 @@ main {
     color: var(--accent-color);
 }
 
-
 .add-producto {
     text-align: center;
     margin-top: 1rem;
@@ -193,19 +201,12 @@ main {
     background-color: #e69500;
 }
 
-
-body {
-    font-family: system-ui, -apple-system, sans-serif;
-    color: var(--text-dark);
-    background-color: #f0f0f0;
-}
-
 .container-fluid {
     padding-left: 0;
     padding-right: 0;
 }
 
-
+/* Modal styles */
 .modal {
     z-index: 1070;
     position: fixed;
@@ -270,7 +271,7 @@ body {
 }
 
 button {
-    transition: none;
+    transition: var(--transition);
 }
 
 .btn-secondary {
@@ -309,14 +310,8 @@ button {
 
 .gallery-buttons button {
     opacity: 1;
-    transition: none;
+    transition: var(--transition);
 }
-
-.modal.show .modal-dialog {
-    z-index: 1071;
-    display: flex;
-}
-
 
 .modal-dialog {
     margin-top: 50px;
@@ -325,3 +320,55 @@ button {
     margin-left: auto;
 }
 
+/* Media Queries for Responsiveness */
+@media (max-width: 767.98px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -16rem;
+        transition: left 0.3s ease;
+        width: 16rem;
+    }
+
+    .sidebar.show {
+        left: 0;
+    }
+
+    main {
+        margin-left: 0;
+    }
+
+    .gallery-item {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+    }
+
+    .btn-add {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .gallery-title {
+        font-size: 1rem;
+    }
+
+    .gallery-text, .gallery-price {
+        font-size: 0.8rem;
+    }
+
+    .modal-dialog {
+        max-width: 90%;
+        margin: 1rem auto;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .gallery-item {
+        flex: 1 1 48%;
+        max-width: 48%;
+    }
+}

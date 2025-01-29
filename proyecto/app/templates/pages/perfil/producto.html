@@ -15,9 +15,19 @@
     <header>{% include '../../components/toolbar.html' %}</header>
 
     <div class="container-fluid">
+        <button class="btn btn-primary d-md-none" type="button" data-bs-toggle="collapse"
+            data-bs-target="#sidebarCollapse" aria-controls="sidebarCollapse" aria-expanded="false"
+            aria-label="Toggle sidebar">
+            <i class="bi bi-list"></i>
+        </button>
         <div class="row">
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse d-md-block" id="sidebarCollapse">
                 <div class="sidebar-sticky">
+                    <button class="btn btn-primary d-md-none" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#sidebarCollapse" aria-controls="sidebarCollapse" aria-expanded="false"
+                    aria-label="Toggle sidebar">
+                    <i class="bi bi-list"></i>
+                    </button>
                     <div class="profile-pic">
                         <img src="{{ artista.imagen.url }}" alt="Profile Picture" class="rounded-circle">
                     </div>
@@ -30,13 +40,16 @@
                         </li>
                         {% if artista.plan != 'basico' %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% if not es_mi_perfil %}{% url 'mostrarObras' artista.id %}{% else %}{% url 'mostrarObras' %}{% endif %}" style="color: black;">
+                            <a class="nav-link"
+                                href="{% if not es_mi_perfil %}{% url 'mostrarObras' artista.id %}{% else %}{% url 'mostrarObras' %}{% endif %}"
+                                style="color: black;">
                                 <i class="bi bi-star"></i> Obras
                             </a>
                         </li>
                         {% if artista.plan != 'plan1' %}
                         <li class="nav-item">
-                            <a class="nav-link active" href="{% if not es_mi_perfil %}{% url 'mostrarProductos' artista.id %}{% else %}{% url 'mostrarProductos' %}{% endif %}">
+                            <a class="nav-link active"
+                                href="{% if not es_mi_perfil %}{% url 'mostrarProductos' artista.id %}{% else %}{% url 'mostrarProductos' %}{% endif %}">
                                 <i class="bi bi-grid-3x3-gap"></i> Productos
                             </a>
                         </li>
@@ -44,19 +57,22 @@
                         {% endif %}
                         <li class="nav-item">
                             <a class="nav-link"
-                                href="{% if not es_mi_perfil %}{% url 'mostrarEventos' artista.id %}{% else %}{% url 'mostrarEventos' %}{% endif %}" style="color: black;">
+                                href="{% if not es_mi_perfil %}{% url 'mostrarEventos' artista.id %}{% else %}{% url 'mostrarEventos' %}{% endif %}"
+                                style="color: black;">
                                 <i class="bi bi-calendar"></i> Eventos
                             </a>
                         </li>
                         {% if es_mi_perfil %}
                         <li class="nav-item">
-                            <a class="nav-link{% if 'configuracion' in request.path %} active{% endif %}" href="{% url 'configuracion' %}" style="color: black;">
+                            <a class="nav-link{% if 'configuracion' in request.path %} active{% endif %}"
+                                href="{% url 'configuracion' %}" style="color: black;">
                                 <i class="bi bi-gear"></i> Configuración
                             </a>
                         </li>
                         {% endif %}
                     </ul>
                 </div>
+                
             </nav>
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
@@ -64,63 +80,62 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2 class="section-title">Productos</h2>
                         {% if es_mi_perfil %}
-                        {% if artista.plan == 'plan2' and productos.count < 1 %}
-                            <div class="add-producto">
-                                <form method="POST" action="{% url 'agregarProducto' %}">
-                                    {% csrf_token %}
-                                    <button class="btn btn-add">➕ Agregar Producto</button>
-                                </form>
-                            </div>
-                        {% elif artista.plan == 'plan3' and productos.count < 5 %}
-                            <div class="add-producto">
-                                <form method="POST" action="{% url 'agregarProducto' %}">
-                                    {% csrf_token %}
-                                    <button class="btn btn-add">➕ Agregar Producto</button>
-                                </form>
-                            </div>
-                        {% endif %}
-                        {% endif %}
+                        {% if artista.plan == 'plan2' and productos.count < 1 %} <div class="add-producto">
+                            <form method="POST" action="{% url 'agregarProducto' %}">
+                                {% csrf_token %}
+                                <button class="btn btn-add">➕ Agregar Producto</button>
+                            </form>
                     </div>
-                    <div class="gallery">
-                        {% for p in productos %}
-                            {% if es_mi_perfil or p.verificacion == 'ACEPTADO' %}
-                            <div class="gallery-item">
-                                <div class="gallery-image">
-                                    <img src="{{ p.imagen.url }}" class="img-fluid" alt="{{ p.nombre }}">
-                                    <div class="overlay">
-                                        <div class="text">
-                                            <h5 class="gallery-title">{{ p.nombre }}</h5>
-                                            <p class="gallery-text">{{ p.descripcion }}</p>
-                                            <p class="gallery-price"><strong>{{ p.precio }}$</strong></p>
-                                            {% if es_mi_perfil %}
-                                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ p.id }}">Editar</button>
-                                            <button class="btn btn-sm btn-danger" onclick="confirmarBorrar('{{ p.id }}')">Eliminar</button>
-                                            {% endif %}
-                                            <a href="{% url 'producto_detail' p.id %}" class="btn btn-sm btn-warning">Ver</a>
-                                            {% if es_mi_perfil %}
-                                            <p class="gallery-status">
-                                                {% if p.verificacion == 'ACEPTADO' %}           
-                                                    <span class="badge bg-success">Aceptado</span>
-                                                {% elif p.verificacion == 'EN_ESPERA' %}
-                                                    <span class="badge bg-warning text-dark">En Espera</span>
-                                                {% else %}
-                                                    <span class="badge bg-danger">Rechazado</span>
-                                                {% endif %}
-                                            </p>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endif %}
-                        {% empty %}
-                        <div class="alert alert-warning text-center">No se encontraron productos.</div>
-                        {% endfor %}
-                    </div>
-                </section>
-                <br>
-            </main>
+                    {% elif artista.plan == 'plan3' and productos.count < 5 %} <div class="add-producto">
+                        <form method="POST" action="{% url 'agregarProducto' %}">
+                            {% csrf_token %}
+                            <button class="btn btn-add">➕ Agregar Producto</button>
+                        </form>
         </div>
+        {% endif %}
+        {% endif %}
+    </div>
+    <div class="gallery">
+        {% for p in productos %}
+        {% if es_mi_perfil or p.verificacion == 'ACEPTADO' %}
+        <div class="gallery-item">
+            <div class="gallery-image">
+                <img src="{{ p.imagen.url }}" class="img-fluid" alt="{{ p.nombre }}">
+                <div class="overlay">
+                    <div class="text">
+                        <h5 class="gallery-title">{{ p.nombre }}</h5>
+                        <p class="gallery-text">{{ p.descripcion }}</p>
+                        <p class="gallery-price"><strong>{{ p.precio }}$</strong></p>
+                        {% if es_mi_perfil %}
+                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#editModal{{ p.id }}">Editar</button>
+                        <button class="btn btn-sm btn-danger" onclick="confirmarBorrar('{{ p.id }}')">Eliminar</button>
+                        {% endif %}
+                        <a href="{% url 'producto_detail' p.id %}" class="btn btn-sm btn-warning">Ver</a>
+                        {% if es_mi_perfil %}
+                        <p class="gallery-status">
+                            {% if p.verificacion == 'ACEPTADO' %}
+                            <span class="badge bg-success">Aceptado</span>
+                            {% elif p.verificacion == 'EN_ESPERA' %}
+                            <span class="badge bg-warning text-dark">En Espera</span>
+                            {% else %}
+                            <span class="badge bg-danger">Rechazado</span>
+                            {% endif %}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% empty %}
+        <div class="alert alert-warning text-center">No se encontraron productos.</div>
+        {% endfor %}
+    </div>
+    </section>
+    <br>
+    </main>
+    </div>
     </div>
 
     {% for p in productos %}
@@ -137,27 +152,33 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="nombre{{ p.id }}" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombre{{ p.id }}" name="nombre" value="{{ p.nombre }}" required>
+                            <input type="text" class="form-control" id="nombre{{ p.id }}" name="nombre"
+                                value="{{ p.nombre }}" required>
                         </div>
                         <div class="mb-3">
                             <label for="descripcion{{ p.id }}" class="form-label">Descripción</label>
-                            <textarea class="form-control" id="descripcion{{ p.id }}" name="descripcion" required>{{ p.descripcion }}</textarea>
+                            <textarea class="form-control" id="descripcion{{ p.id }}" name="descripcion"
+                                required>{{ p.descripcion }}</textarea>
                         </div>
                         <div class="mb-3">
                             <label for="precio{{ p.id }}" class="form-label">Precio</label>
-                            <input type="number" step="0.01" class="form-control" id="precio{{ p.id }}" name="precio" value="{{ p.precio }}" required>
+                            <input type="number" step="0.01" class="form-control" id="precio{{ p.id }}" name="precio"
+                                value="{{ p.precio }}" required>
                         </div>
                         <div class="mb-3">
                             <label for="stock" class="form-label">Stock</label>
-                            <input type="number" class="form-control" id="stock" name="stock" value="{{p.stock}}" required>
+                            <input type="number" class="form-control" id="stock" name="stock" value="{{p.stock}}"
+                                required>
                         </div>
                         <div class="mb-3">
                             <div>
-                                <img src="{{ p.imagen.url }}" alt="Imagen Actual del Producto" class="img-fluid mb-2" style="max-height: 150px;">
+                                <img src="{{ p.imagen.url }}" alt="Imagen Actual del Producto" class="img-fluid mb-2"
+                                    style="max-height: 150px;">
                                 <p class="small text-muted">Imagen actual: {{ p.imagen.name }}</p>
                             </div>
                             <label for="imagen{{ p.id }}" class="form-label">Imagen</label>
-                            <input type="file" class="form-control" id="imagen{{ p.id }}" name="imagen" accept="image/*">
+                            <input type="file" class="form-control" id="imagen{{ p.id }}" name="imagen"
+                                accept="image/*">
                             <br>
                             <span class="badge bg-secondary">No Seleccionar Imagen Para Mantener la imagen actual</span>
                         </div>

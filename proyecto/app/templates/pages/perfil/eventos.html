@@ -16,9 +16,17 @@
     <header>{% include '../../components/toolbar.html' %}</header>
 
     <div class="container-fluid">
+        <button class="btn btn-primary d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarCollapse" aria-controls="sidebarCollapse" aria-expanded="false" aria-label="Toggle sidebar">
+            <i class="bi bi-list"></i>
+        </button>
         <div class="row">
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse d-md-block" id="sidebarCollapse">
                 <div class="sidebar-sticky">
+                    <button class="btn btn-primary d-md-none" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#sidebarCollapse" aria-controls="sidebarCollapse" aria-expanded="false"
+                    aria-label="Toggle sidebar">
+                    <i class="bi bi-list"></i>
+                    </button>
                     <div class="profile-pic">
                         <img src="{{ artista.imagen.url }}" alt="Profile Picture" class="rounded-circle">
                     </div>
@@ -47,61 +55,66 @@
                 </div>
             </nav>
 
-            <div class="col-md-3 col-lg-2 d-md-block event-list-sidebar">
-                <h3 class="event-list-title">Lista de Eventos</h3>
-                
-                <div class="mb-3">
-                    <form action="" method="get">
-                        <input type="text" name="q" class="form-control" placeholder="Buscar eventos..." value="{{ request.GET.q }}">
-                        <button type="submit" class="btn btn-outline-secondary mt-1">Buscar</button>
-                    </form>
-                </div>
-
-                <div class="event-list">
-                    {% for evento in eventos_page %}
-                    <div class="card mb-2">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ evento.titulo }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">{{ evento.fecha_inicio|date:"d M Y H:i" }} - {% if evento.fecha_fin %}{{ evento.fecha_fin|date:"d M Y H:i" }}{% else %}Sin Fecha De Fin{% endif %}</h6>
-                            <p class="card-text">{{ evento.descripcion|truncatewords:10 }}</p>
-                            <p class="card-text"><small class="text-muted">Ubicación: {{ evento.ubicacion }}</small></p>
-                            {% if es_mi_perfil and evento.artista_id == artista.id %}
-                            <a href="#editEventModal{{ evento.id }}" class="btn btn-sm btn-primary btn-editar" data-bs-toggle="modal">Editar</a>
-                            <button class="btn btn-sm btn-danger btn-eliminar" onclick="confirmarEliminar('{{ evento.id }}')">Eliminar</button>
-                            {% endif %}
-                            <a href="{% url 'gestionarParticipacion' evento.id %}" class="btn btn-sm btn-success btn-ver">Ver</a>
-                        </div>
+            <div class="col-md-3 col-lg-2 d-md-block event-list-sidebar collapse d-md-block" id="eventListCollapse">
+                <button class="btn btn-primary d-md-none mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#eventListCollapse" aria-controls="eventListCollapse" aria-expanded="false" aria-label="Toggle event list">
+                    <i class="bi bi-list-ul"></i> Lista de Eventos
+                </button>
+                <div class="collapse show" id="eventListCollapse">
+                    <h3 class="event-list-title">Lista de Eventos</h3>
+                    
+                    <div class="mb-3">
+                        <form action="" method="get">
+                            <input type="text" name="q" class="form-control" placeholder="Buscar eventos..." value="{{ request.GET.q }}">
+                            <button type="submit" class="btn btn-outline-secondary mt-1">Buscar</button>
+                        </form>
                     </div>
-                    {% empty %}
-                    <div class="alert alert-warning text-center">No se encontraron eventos.</div>
-                    {% endfor %}
-                </div>
 
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-center">
-                        {% if eventos_page.has_previous %}
-                        <li class="page-item"><a class="page-link" href="?page={{ eventos_page.previous_page_number }}&q={{ search_query|urlencode }}">Previous</a></li>
-                        {% else %}
-                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
-                        {% endif %}
-                        
-                        {% if eventos_page.number > 1 %}
-                        <li class="page-item"><a class="page-link" href="?page={{ eventos_page.number|add:'-1' }}&q={{ search_query|urlencode }}">{{ eventos_page.number|add:'-1' }}</a></li>
-                        {% endif %}
-                        
-                        <li class="page-item active"><span class="page-link">{{ eventos_page.number }} <span class="sr-only"></span></span></li>
-                        
-                        {% if eventos_page.number < eventos_page.paginator.num_pages %}
-                        <li class="page-item"><a class="page-link" href="?page={{ eventos_page.number|add:'1' }}&q={{ search_query|urlencode }}">{{ eventos_page.number|add:'1' }}</a></li>
-                        {% endif %}
-                        
-                        {% if eventos_page.has_next %}
-                        <li class="page-item"><a class="page-link" href="?page={{ eventos_page.next_page_number }}&q={{ search_query|urlencode }}">Next</a></li>
-                        {% else %}
-                        <li class="page-item disabled"><span class="page-link">Next</span></li>
-                        {% endif %}
-                    </ul>
-                </nav>
+                    <div class="event-list">
+                        {% for evento in eventos_page %}
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ evento.titulo }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ evento.fecha_inicio|date:"d M Y H:i" }} - {% if evento.fecha_fin %}{{ evento.fecha_fin|date:"d M Y H:i" }}{% else %}Sin Fecha De Fin{% endif %}</h6>
+                                <p class="card-text">{{ evento.descripcion|truncatewords:10 }}</p>
+                                <p class="card-text"><small class="text-muted">Ubicación: {{ evento.ubicacion }}</small></p>
+                                {% if es_mi_perfil and evento.artista_id == artista.id %}
+                                <a href="#editEventModal{{ evento.id }}" class="btn btn-sm btn-primary btn-editar" data-bs-toggle="modal">Editar</a>
+                                <button class="btn btn-sm btn-danger btn-eliminar" onclick="confirmarEliminar('{{ evento.id }}')">Eliminar</button>
+                                {% endif %}
+                                <a href="{% url 'gestionarParticipacion' evento.id %}" class="btn btn-sm btn-success btn-ver">Ver</a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="alert alert-warning text-center">No se encontraron eventos.</div>
+                        {% endfor %}
+                    </div>
+
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            {% if eventos_page.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ eventos_page.previous_page_number }}&q={{ search_query|urlencode }}">Previous</a></li>
+                            {% else %}
+                            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                            {% endif %}
+                            
+                            {% if eventos_page.number > 1 %}
+                            <li class="page-item"><a class="page-link" href="?page={{ eventos_page.number|add:'-1' }}&q={{ search_query|urlencode }}">{{ eventos_page.number|add:'-1' }}</a></li>
+                            {% endif %}
+                            
+                            <li class="page-item active"><span class="page-link">{{ eventos_page.number }} <span class="sr-only"></span></span></li>
+                            
+                            {% if eventos_page.number < eventos_page.paginator.num_pages %}
+                            <li class="page-item"><a class="page-link" href="?page={{ eventos_page.number|add:'1' }}&q={{ search_query|urlencode }}">{{ eventos_page.number|add:'1' }}</a></li>
+                            {% endif %}
+                            
+                            {% if eventos_page.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ eventos_page.next_page_number }}&q={{ search_query|urlencode }}">Next</a></li>
+                            {% else %}
+                            <li class="page-item disabled"><span class="page-link">Next</span></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
             </div>
             
             <main class="col-md-6 ms-sm-auto col-lg-8 px-md-4">

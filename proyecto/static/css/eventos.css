@@ -5,11 +5,12 @@
     --text-dark: #333333;
     --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
-    --highlight-bg: #fff3e0;  /* New variable for highlight background */
-    --highlight-hover-bg: #ffe0b2;  /* New variable for highlight hover background */
-    --active-border: 4px solid var(--accent-color);  /* New variable for active border */
+    --highlight-bg: #fff3e0;
+    --highlight-hover-bg: #ffe0b2;
+    --active-border: 4px solid var(--accent-color);
 }
 
+/* General body styles */
 body {
     font-family: system-ui, -apple-system, sans-serif;
     color: var(--text-dark);
@@ -18,6 +19,7 @@ body {
     min-height: 100vh;
 }
 
+/* Sidebar styles */
 .sidebar {
     top: 0;
     bottom: 0;
@@ -71,7 +73,7 @@ body {
     color: var(--text-light);
     font-weight: bold;
     border-left: var(--active-border);
-    padding-left: calc(1rem - 4px); /* Ajustar después del borde */
+    padding-left: calc(1rem - 4px);
 }
 
 .nav-item.highlight {
@@ -83,12 +85,10 @@ body {
     background-color: var(--highlight-hover-bg);
 }
 
-
 .nav-link i {
     margin-right: 0.5rem;
 }
 
-/* Target 'Eventos' specifically to match 'Configuración' styling */
 .eventos .nav-link,
 .nav-item.highlight .nav-link {
     background-color: var(--highlight-bg);
@@ -209,12 +209,12 @@ body {
     margin-top: 1rem;
     justify-content: center;
     display: flex;
-    width: 100%; 
+    width: 100%;
     flex-wrap: wrap;
 }
 
 .page-item {
-    flex: 0 1 auto; 
+    flex: 0 1 auto;
     margin: 0 2px;
 }
 
@@ -257,15 +257,91 @@ body {
     border: 1px solid #ffeeba;
 }
 
-@media (max-width: 768px) {
-    .sidebar {
-        width: 100%;
-        position: static;
-        padding: 1rem;
+/* Media Queries for Responsiveness */
+/* General Adjustments */
+@media (max-width: 767.98px) {
+    .sidebar, .event-list-sidebar {
+        position: fixed;
+        top: 0;
+        left: -16rem; /* Initially hidden off-screen */
+        width: 16rem;
+        height: 100vh;
+        transition: left var(--transition);
+        z-index: 1050; /* Ensure it's above other content */
+    }
+
+    .sidebar.show, .event-list-sidebar.show {
+        left: 0; /* Slide in when toggled */
     }
 
     main {
-        margin-left: 0;
+        margin-left: 0; /* No margin when sidebar is hidden */
+        padding: 1rem; /* Adjust padding for mobile */
+    }
+
+    .profile-pic img {
+        width: 60px;
+        height: 60px; /* Smaller profile pic for mobile */
+    }
+
+    .profile-name {
+        font-size: 1.2rem; /* Smaller font size for mobile */
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+    }
+
+    .btn-add {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .event-list-title {
+        font-size: 1.2rem;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .card-subtitle {
+        font-size: 0.85rem;
+    }
+
+    .card-text {
+        font-size: 0.9rem;
+    }
+
+    .btn-editar, .btn-eliminar, .btn-ver {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.7rem;
+    }
+}
+
+/* Sidebar Toggle Button */
+.btn-primary.d-md-none {
+    margin: 1rem 0;
+    display: block;
+}
+
+/* Event List Sidebar Toggle Button */
+.event-list-sidebar .btn-primary.d-md-none {
+    margin-bottom: 1rem;
+}
+
+/* Ensure content doesn't overlap with the sidebar on larger screens */
+@media (min-width: 768px) {
+    main {
+        margin-left: 16rem; /* Adjust for fixed sidebar */
+    }
+}
+
+/* Modal Adjustments for Mobile */
+@media (max-width: 767.98px) {
+    .modal-dialog {
+        max-width: 90%; /* Make modal full width on mobile */
+        margin: 1rem auto;
     }
 }
 

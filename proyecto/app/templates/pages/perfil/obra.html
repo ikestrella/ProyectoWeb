@@ -15,9 +15,17 @@
     <header>{% include '../../components/toolbar.html' %}</header>
 
     <div class="container-fluid">
+        <button class="btn btn-primary d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarCollapse" aria-controls="sidebarCollapse" aria-expanded="false" aria-label="Toggle sidebar">
+            <i class="bi bi-list"></i>
+        </button>
         <div class="row">
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse d-md-block" id="sidebarCollapse">
                 <div class="sidebar-sticky">
+                    <button class="btn btn-primary d-md-none" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#sidebarCollapse" aria-controls="sidebarCollapse" aria-expanded="false"
+                    aria-label="Toggle sidebar">
+                    <i class="bi bi-list"></i>
+                    </button>
                     <div class="profile-pic">
                         <img src="{{ artista.imagen.url }}" alt="Profile Picture" class="rounded-circle">
                     </div>
@@ -74,7 +82,7 @@
                                         <button class="btn btn-sm btn-danger"
                                             onclick="confirmarBorrar('{{ o.id }}')">Eliminar</button>
                                         {% endif %}
-                                        <a href="{% url 'mostrarObra' o.id %}" class="view-obra-btn">VER</a>
+                                        <a href="{% url 'mostrarObra' o.id %}" class="btn btn-sm btn-success view-obra-btn">VER</a>
                                         {% if es_mi_perfil %}
                                         <p class="gallery-status">
                                             {% if o.verificacion == 'ACEPTADO' %}           

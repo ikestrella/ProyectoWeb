@@ -5,9 +5,9 @@
   --text-dark: #333333;
   --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   --transition: all 0.3s ease;
-  --highlight-bg: #fff3e0;  /* New variable for highlight background */
-  --highlight-hover-bg: #ffe0b2;  /* New variable for highlight hover background */
-  --active-border: 4px solid var(--accent-color);  /* New variable for active border */
+  --highlight-bg: #fff3e0;
+  --highlight-hover-bg: #ffe0b2;
+  --active-border: 4px solid var(--accent-color);
 }
 
 .sidebar {
@@ -85,4 +85,32 @@
 .nav-item.highlight .nav-link.active {
   background-color: var(--highlight-hover-bg);
   color: var(--accent-color);
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 767.98px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -16rem;
+    transition: left 0.3s ease;
+    width: 16rem;
+  }
+
+  .sidebar.show {
+    left: 0;
+  }
+
+  main {
+    margin-left: 0;
+  }
+
+  .profile-pic img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .profile-name {
+    font-size: 1.2rem;
+  }
 }
