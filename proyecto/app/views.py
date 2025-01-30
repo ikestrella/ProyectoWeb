@@ -1034,7 +1034,6 @@ def actualizar_cantidad_carrito(request, item_id, accion):
         if carrito_item.producto.stock > 0:
             carrito_item.cantidad += 1
             carrito_item.producto.stock -= 1
-            
             carrito_item.producto.save()
             carrito_item.save()
         else:
@@ -1043,8 +1042,8 @@ def actualizar_cantidad_carrito(request, item_id, accion):
         if carrito_item.cantidad > 1:
             carrito_item.cantidad -= 1
             carrito_item.producto.stock += 1
-            carrito_item.producto.save()
             carrito_item.save()
+            carrito_item.producto.save()
         else:
             carrito_item.producto.stock += carrito_item.cantidad
             carrito_item.producto.save()
@@ -1053,8 +1052,15 @@ def actualizar_cantidad_carrito(request, item_id, accion):
     total_items = sum(item.cantidad for item in carrito_item.carrito.items.all())
     total = carrito_item.carrito.calcular_total()
     request.session['cart_count'] = total_items
-    
-    return redirect('mostrar_carrito')
+
+    return JsonResponse({
+        'success': True,
+        'cantidad': carrito_item.cantidad if carrito_item else 0,
+        'total': total,
+        'total_items': total_items,
+        'nuevo_stock': carrito_item.producto.stock if carrito_item else 0,
+        'producto_id': carrito_item.producto.id if carrito_item else None
+    })
 
 from django.http import HttpResponse
 from django.shortcuts import redirect, render

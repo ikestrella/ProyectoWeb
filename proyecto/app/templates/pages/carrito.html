@@ -21,9 +21,9 @@
                     <div class="cart-item-name">{{ item.producto.nombre }}</div>
                     <div class="cart-item-price" data-price="{{ item.producto.precio }}">{{ item.producto.precio }}$</div>
                     <div class="cart-item-quantity">
-                        <button class="btn-quantity" data-action="disminuir"><a href="{% url 'mostrar_carrito' %}">-</a></button>
+                        <button class="btn-quantity" data-action="disminuir">-</button>
                         <span class="quantity">{{ item.cantidad }}</span>
-                        <button class="btn-quantity" data-action="incrementar"><a href="{% url 'mostrar_carrito' %}">+</a></button>
+                        <button class="btn-quantity" data-action="incrementar">+</button>
                     </div>
                 </div>
             </li>
@@ -52,7 +52,8 @@
             });
 
             buttons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent default link behavior
                     const itemId = this.closest('.cart-item').getAttribute('data-item-id');
                     const action = this.getAttribute('data-action');
                     fetch(`/carrito/actualizar/${itemId}/${action}/`, {
@@ -68,18 +69,20 @@
                         if (data.success) {
                             const cartItem = document.querySelector(`.cart-item[data-item-id="${itemId}"]`);
                             cartItem.querySelector('.quantity').textContent = data.cantidad;
-                            cartItem.querySelector('.cart-item-price').textContent = `${data.cantidad * cartItem.querySelector('.cart-item-price').dataset.price}$`;
+                            const priceElement = cartItem.querySelector('.cart-item-price');
+                            const unitPrice = parseFloat(priceElement.dataset.price);
+                            priceElement.textContent = `${data.cantidad * unitPrice}$`;
                             document.getElementById('total').textContent = `${data.total}$`;
+                            
+                            // Update cart count if it's in the HTML
                             const cartCountElement = document.getElementById('cart-count');
-                            cartCountElement.textContent = data.total_items;
-                            if (data.nuevo_stock < 1) {
-                                const incrementButton = cartItem.querySelector('.btn-quantity[data-action="incrementar"]');
-                                incrementButton.disabled = true;
-                            } else {
-                                const incrementButton = cartItem.querySelector('.btn-quantity[data-action="incrementar"]');
-                                incrementButton.disabled = false;
-                            }
-                            // Actualizar el stock en la página de inicio
+                            if (cartCountElement) cartCountElement.textContent = data.total_items;
+                            
+                            // Disable or enable increment button based on stock
+                            const incrementButton = cartItem.querySelector('.btn-quantity[data-action="incrementar"]');
+                            incrementButton.disabled = data.nuevo_stock < 1;
+
+                            // Update stock on the product page if available
                             const stockElement = document.getElementById(`stock-${data.producto_id}`);
                             if (stockElement) {
                                 stockElement.textContent = `Stock: ${data.nuevo_stock}`;
@@ -87,6 +90,11 @@
                                     const addButton = document.querySelector(`.add-to-cart-form[data-product-id="${data.producto_id}"] button`);
                                     if (addButton) {
                                         addButton.disabled = true;
+                                    }
+                                } else {
+                                    const addButton = document.querySelector(`.add-to-cart-form[data-product-id="${data.producto_id}"] button`);
+                                    if (addButton) {
+                                        addButton.disabled = false;
                                     }
                                 }
                             }
