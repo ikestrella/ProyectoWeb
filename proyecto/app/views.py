@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.urls import reverse
 from django.utils import timezone
 from .forms import UserRegistrationForm
-from .models import Artista, Obra, Producto, Evento, ParticipacionEvento, Carrito, CarritoItem, Comentario
+from .models import Artista, Obra, Producto, Evento, ParticipacionEvento, Carrito, CarritoItem, Comentario, Venta
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.contenttypes.models import ContentType
 
@@ -48,15 +48,18 @@ def select_plan(request):
     if request.method == 'POST':
         plan = request.POST.get('plan')
         if plan in ['plan1', 'plan2', 'plan3']:
-            artista.plan = plan
-            artista.save()
-            messages.success(request, f'Has actualizado tu plan a {plan}.')
-        return redirect('configuracion')
+            if plan == artista.plan:
+                # Si el plan seleccionado es el mismo que el actual, redirigir a configuración
+                messages.info(request, f'Ya tienes el plan {plan}.')
+                return redirect('configuracion')
+            else:
+                messages.success(request, f'Has seleccionado el plan {plan}. Procede al checkout para completar el pago.')
+                return redirect('plan_checkout', plan=plan)
     
     planes_disponibles = [
-        {'nombre': 'Plan 1', 'valor': 'plan1'},
-        {'nombre': 'Plan 2', 'valor': 'plan2'},
-        {'nombre': 'Plan 3', 'valor': 'plan3'}
+        {'nombre': 'Plan 1', 'valor': 'plan1', 'precio': '$10.00'},
+        {'nombre': 'Plan 2', 'valor': 'plan2', 'precio': '$20.00'},
+        {'nombre': 'Plan 3', 'valor': 'plan3', 'precio': '$30.00'}
     ]
     
     context = {
@@ -67,6 +70,53 @@ def select_plan(request):
     
     return render(request, 'pages/select_plan.html', context)
 
+def plan_checkout(request, plan):
+    usuario = request.session.get('usuario')
+    if not usuario:
+        return redirect('register')
+    
+    try:
+        artista = Artista.objects.get(usuario=usuario)
+    except Artista.DoesNotExist:
+        return redirect('register')
+
+    selected_plan = next((p for p in [
+        {'nombre': 'Plan 1', 'valor': 'plan1', 'precio': '10.00'},
+        {'nombre': 'Plan 2', 'valor': 'plan2', 'precio': '20.00'},
+        {'nombre': 'Plan 3', 'valor': 'plan3', 'precio': '30.00'}
+    ] if p['valor'] == plan), None)
+
+    if not selected_plan:
+        messages.error(request, 'Plan no encontrado.')
+        return redirect('select_plan')
+
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        numero_tarjeta = request.POST.get('numero_tarjeta')
+        fecha_expiracion = request.POST.get('fecha_expiracion')
+        cvv = request.POST.get('cvv')
+
+        if numero_tarjeta and fecha_expiracion and cvv:
+            # Simulación de verificación de pago
+            pago_realizado = True  # En un sistema real, esto dependería de la validación de la tarjeta
+
+            if pago_realizado:
+                # Solo actualizamos el plan si el pago fue exitoso
+                artista.plan = plan
+                artista.save()
+                messages.success(request, f'Pago realizado con éxito. Tu plan ha sido actualizado a {selected_plan["nombre"]}.')
+                return redirect('configuracion')
+            else:
+                messages.error(request, 'Error al procesar el pago. Inténtalo de nuevo.')
+        else:
+            messages.error(request, 'Por favor, completa todos los campos de pago.')
+
+    context = {
+        'artista': artista,
+        'plan': selected_plan,
+    }
+    
+    return render(request, 'pages/plan_checkout.html', context)
 
 def administrarPagina(request):
     usuario = request.session.get('usuario')
@@ -197,10 +247,12 @@ def configuracion(request):
         elif 'upgradear_plan' in request.POST:
             return redirect('select_plan')
 
+    ventas = Venta.objects.filter(usuario=artista)
     context = {
         'artista': artista,
         'planes': Artista.PLAN_CHOICES,
-        'es_mi_perfil': True
+        'es_mi_perfil': True,
+        'ventas': ventas  # Añade esto al contexto
     }
     return render(request, 'pages/perfil/configuracion.html', context)
 
@@ -1004,6 +1056,11 @@ def actualizar_cantidad_carrito(request, item_id, accion):
     
     return redirect('mostrar_carrito')
 
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from django.contrib import messages
+from .models import Carrito, CarritoItem, Venta, Artista
+
 def procesar_pago(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
@@ -1011,25 +1068,45 @@ def procesar_pago(request):
         fecha_expiracion = request.POST.get('fecha_expiracion')
         cvv = request.POST.get('cvv')
 
-        pago_realizado = True
+        # Simulación de pago (en realidad, esto sería inseguro y no funcional para pagos reales)
+        if numero_tarjeta and fecha_expiracion and cvv:
+            pago_realizado = True  # En un sistema real, esto dependería de la validación de la tarjeta
 
-        if pago_realizado:
-            usuario = request.session.get('usuario')
-            try:
-                artista = Artista.objects.get(usuario=usuario)
-            except Artista.DoesNotExist:
-                return HttpResponse("El artista no existe.", status=404)
+            if pago_realizado:
+                usuario = request.session.get('usuario')
+                if not usuario:
+                    return redirect('login')
 
-            carrito = Carrito.objects.get(usuario=artista)
-            items = list(carrito.items.all())
-            total = carrito.calcular_total()
-            
-            carrito.items.all().delete()
-            request.session['cart_count'] = 0
-            messages.add_message(request, messages.SUCCESS, 'Pago realizado con éxito y carrito limpiado.')
-            return render(request, 'pages/checkout.html', {'items': items, 'total': total, 'factura': True})
+                try:
+                    artista = Artista.objects.get(usuario=usuario)
+                except Artista.DoesNotExist:
+                    return HttpResponse("El artista no existe.", status=404)
+
+                carrito = Carrito.objects.get(usuario=artista)
+                items = list(carrito.items.all())
+                total = carrito.calcular_total()
+
+                # Registrar la venta
+                for item in items:
+                    Venta.objects.create(
+                        usuario=artista,
+                        producto=item.producto,
+                        cantidad=item.cantidad,
+                        precio_unitario=item.producto.precio,
+                        total=item.subtotal()
+                    )
+
+                # Limpiar el carrito
+                carrito.items.all().delete()
+                request.session['cart_count'] = 0
+                messages.success(request, 'Pago realizado con éxito y carrito limpiado.')
+                return render(request, 'pages/checkout.html', {'items': items, 'total': total, 'factura': True})
+            else:
+                messages.error(request, 'Error al procesar el pago. Inténtalo de nuevo.')
+                return redirect('checkout')
         else:
-            messages.add_message(request, messages.ERROR, 'Error al procesar el pago. Inténtalo de nuevo.')
+            messages.error(request, 'Por favor, completa todos los campos de pago.')
+            return redirect('checkout')
 
     return redirect('checkout')
 

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout del Plan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .checkout-form {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .btn {
+            border-radius: 25px;
+            padding: 10px 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <h2 class="text-center mb-5">Checkout del Plan {{ plan.nombre }}</h2>
+        <div class="checkout-form">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">Nombre en la Tarjeta</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre del Titular" required>
+                </div>
+                <div class="mb-3">
+                    <label for="numero_tarjeta" class="form-label">Número de Tarjeta</label>
+                    <input type="text" class="form-control" id="numero_tarjeta" name="numero_tarjeta" placeholder="1234 5678 9012 3456" maxlength="16" pattern="\d{16}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="fecha_expiracion" class="form-label">Fecha de Expiración</label>
+                    <input type="text" class="form-control" id="fecha_expiracion" name="fecha_expiracion" placeholder="MM/YY" pattern="\d{2}/\d{2}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="cvv" class="form-label">CVV</label>
+                    <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123" maxlength="3" pattern="\d{3}" required>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Realizar Pago</button>
+                    <a href="{% url 'select_plan' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+            <div class="mt-4 text-center">
+                <h4>Resumen del Plan</h4>
+                <p><strong>Nombre del Plan:</strong> {{ plan.nombre }}</p>
+                <p><strong>Precio:</strong> {{ plan.precio }}</p>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

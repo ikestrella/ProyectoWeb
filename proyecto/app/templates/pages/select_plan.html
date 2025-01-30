@@ -14,6 +14,7 @@
             border-radius: 15px;
             border: none;
             transition: transform 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .card:hover {
             transform: translateY(-5px);
@@ -31,16 +32,18 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 20px;
-        }
-        .artist-icon {
             background-color: #e8f5e9;
-        }
-        .selected-plan {
-            border: 3px solid #007bff;
         }
         .info-plan {
             background-color: #e3f2fd;
             color: #455a64;
+        }
+        .selected-plan {
+            border: 3px solid #007bff;
+        }
+        .plan-price {
+            font-weight: bold;
+            margin-top: -10px; /* Para reducir el espacio entre la descripción y el precio */
         }
     </style>
 </head>
@@ -52,7 +55,7 @@
             <div class="col-md-4">
                 <div class="card shadow-sm h-100 info-plan">
                     <div class="card-body text-center p-5">
-                        <div class="icon-container artist-icon">
+                        <div class="icon-container">
                             <i class="fas fa-info-circle fa-3x text-primary"></i>
                         </div>
                         <h3 class="card-title mb-3">Plan Actual</h3>
@@ -67,17 +70,18 @@
             <div class="col-md-4">
                 <div class="card shadow-sm h-100 {% if plan.valor == plan_actual %}selected-plan{% endif %}">
                     <div class="card-body text-center p-5">
-                        <div class="icon-container artist-icon">
+                        <div class="icon-container">
                             <i class="fas fa-paint-brush fa-3x text-success"></i>
                         </div>
                         <h3 class="card-title mb-3">{{ plan.nombre }}</h3>
                         <p class="card-text mb-4">
                             Comparte tu trabajo y conecta con tu audiencia. Construye tu presencia artística.
                         </p>
+                        <p class="plan-price">{{ plan.precio }}</p>
                         <form method="post">
                             {% csrf_token %}
                             <input type="hidden" name="plan" value="{{ plan.valor }}">
-                            <button type="submit" class="btn btn-outline-success btn-lg">
+                            <button type="submit" class="btn {% if plan.valor == plan_actual %}btn-outline-secondary{% else %}btn-outline-success{% endif %} btn-lg">
                                 {% if plan.valor == plan_actual %}Plan Actual{% else %}Seleccionar{{ plan.nombre }}{% endif %}
                             </button>
                         </form>

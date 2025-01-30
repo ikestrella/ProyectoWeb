@@ -91,7 +91,13 @@
                             {% csrf_token %}
                             <button class="btn btn-add">➕ Agregar Producto</button>
                         </form>
-        </div>
+                    </div>
+                    {% elif artista.plan == 'admin' %} <div class="add-producto">
+                        <form method="POST" action="{% url 'agregarProducto' %}">
+                            {% csrf_token %}
+                            <button class="btn btn-add">➕ Agregar Producto</button>
+                        </form>
+                    </div>
         {% endif %}
         {% endif %}
     </div>

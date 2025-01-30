@@ -7,22 +7,21 @@
     <link rel="stylesheet" href="{% static 'css/configuracion.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <title>Configuración</title>
 </head>
 
 <body>
     <header>{% include '../../components/toolbar.html' %}</header>
     <div class="container-fluid">
-        <button class="btn btn-primary d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarCollapse" aria-controls="sidebarCollapse" aria-expanded="false" aria-label="Toggle sidebar">
+        <button class="btn btn-primary d-md-none toggle-sidebar" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarCollapse" aria-controls="sidebarCollapse" aria-expanded="false" aria-label="Toggle sidebar">
             <i class="bi bi-list"></i>
         </button>
         <div class="row">
             <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse d-md-block" id="sidebarCollapse">
                 <div class="sidebar-sticky">
-                    <button class="btn btn-primary d-md-none" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#sidebarCollapse" aria-controls="sidebarCollapse" aria-expanded="false"
-                    aria-label="Toggle sidebar">
-                    <i class="bi bi-list"></i>
+                    <button class="btn btn-primary d-md-none toggle-sidebar" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarCollapse" aria-controls="sidebarCollapse" aria-expanded="false" aria-label="Toggle sidebar">
+                        <i class="bi bi-list"></i>
                     </button>
                     <div class="profile-pic">
                         <img src="{{ artista.imagen.url }}" alt="Profile Picture" class="rounded-circle">
@@ -47,41 +46,77 @@
                     </ul>
                 </div>
             </nav>
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="alert alert-success text-center">
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 animate__animated animate__fadeIn">
+                <div class="alert alert-success text-center animate__animated animate__bounceIn">
                     <h1>Configuración de Perfil</h1>
                 </div>
-                <form method="post" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data" class="profile-form">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="imagen" class="form-label">Foto de Perfil</label>
+                        <label for="imagen" class="form-label"><i class="bi bi-image"></i> Foto de Perfil</label>
                         <div class="d-flex align-items-center">
-                            <img src="{{ artista.imagen.url }}" alt="Profile Picture" class="rounded me-3" style="max-width: 100px;">
-                            <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
+                            <img src="{{ artista.imagen.url }}" alt="Profile Picture" class="rounded me-3 profile-preview" style="max-width: 100px;">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="imagen" name="imagen" accept="image/*">
+                                <label class="custom-file-label" for="imagen">Seleccionar archivo</label>
+                            </div>
                         </div>
                         <small class="form-text text-muted">Selecciona una nueva imagen para tu perfil.</small>
                     </div>
                     <div class="mb-3">
-                        <label for="acerca" class="form-label">Acerca de mí</label>
-                        <textarea class="form-control" id="acerca" name="acerca" rows="3">{{ artista.acerca }}</textarea>
+                        <label for="acerca" class="form-label"><i class="bi bi-info-circle"></i> Acerca de mí</label>
+                        <textarea class="form-control" id="acerca" name="acerca" rows="3" placeholder="Cuéntanos algo sobre ti...">{{ artista.acerca }}</textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="correo" class="form-label">Correo</label>
-                        <input type="email" class="form-control" id="correo" name="correo" value="{{ artista.correo }}">
+                        <label for="correo" class="form-label"><i class="bi bi-envelope"></i> Correo</label>
+                        <input type="email" class="form-control" id="correo" name="correo" value="{{ artista.correo }}" placeholder="tucorreo@example.com">
                     </div>
                     <div class="mb-3">
-                        <label for="ncontacto" class="form-label">Número de Contacto</label>
-                        <input type="text" class="form-control" id="ncontacto" name="ncontacto" value="{{ artista.ncontacto }}">
+                        <label for="ncontacto" class="form-label"><i class="bi bi-telephone"></i> Número de Contacto</label>
+                        <input type="text" class="form-control" id="ncontacto" name="ncontacto" value="{{ artista.ncontacto }}" placeholder="+593 987654321">
                     </div>
-                    <h3>Plan Actual: <span class="badge bg-primary">{{ artista.get_plan_display }}</span></h3>
+                    <h3 class="mt-4">Plan Actual: <span class="badge bg-primary">{{ artista.get_plan_display }}</span></h3>
                     {% if artista.plan != 'admin' %}
-                    {% if artista.plan != 'basico' %}
-                    <button type="submit" name="cancelar_plan" class="btn btn-danger">Cancelar Plan</button>
+                    <div class="d-flex justify-content-between mt-3">
+                        {% if artista.plan != 'basico' %}
+                        <button type="submit" name="cancelar_plan" class="btn btn-danger"><i class="bi bi-x-circle"></i> Cancelar Plan</button>
+                        {% endif %}
+                        <button type="submit" name="upgradear_plan" class="btn btn-warning"><i class="bi bi-arrow-up-circle"></i> Upgradear Plan</button>
+                    </div>
                     {% endif %}
-                    <button type="submit" name="upgradear_plan" class="btn btn-warning">Upgradear Plan</button>
-                    {% endif %}
-                    <button type="submit" name="editar_perfil" class="btn btn-success">Guardar Cambios</button>
+                    <button type="submit" name="editar_perfil" class="btn btn-success mt-3 w-100"><i class="bi bi-check-circle"></i> Guardar Cambios</button>
                 </form>
+
+                <!-- Sección de Transacciones -->
+                <div class="mt-4 animate__animated animate__fadeInUp">
+                    <h3><i class="bi bi-receipt"></i> Mis Transacciones</h3>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unitario</th>
+                                <th>Total</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for venta in ventas %}
+                            <tr class="animate__animated animate__fadeIn">
+                                <td><a href="{% url 'producto_detail' venta.producto.id %}">{{ venta.producto.nombre }}</a></td>
+                                <td>{{ venta.cantidad }}</td>
+                                <td>{{ venta.precio_unitario|floatformat:2 }} $</td>
+                                <td>{{ venta.total|floatformat:2 }} $</td>
+                                <td>{{ venta.fecha_compra|date:"d/m/Y H:i" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">No tienes transacciones registradas.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </main>
         </div>
     </div>

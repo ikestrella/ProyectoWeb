@@ -161,3 +161,17 @@ class Comentario(models.Model):
 
     def __str__(self):
         return f'Comentario por {self.autor.usuario} en {self.content_object}'
+    
+class Venta(models.Model):
+    usuario = models.ForeignKey(Artista, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    fecha_compra = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'venta'
+        
+    def __str__(self):
+        return f"Venta de {self.cantidad} {self.producto.nombre} por {self.usuario.usuario}"
